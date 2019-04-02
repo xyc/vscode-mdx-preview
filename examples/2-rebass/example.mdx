@@ -1,0 +1,47 @@
+<!--
+Creds to rebass: https://rebassjs.org/getting-started/
+Photo: https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=2048&q=20
+-->
+
+import {
+  Button,
+  Box,
+  Card,
+  Image,
+  Heading,
+  Text
+} from 'rebass'
+
+import photo from './photo.jpeg'
+
+# Example Doc
+
+Example [Rebass](https://jxnblk.com/rebass) components. To preview this MDX file:
+
+1. Install dependencies using `yarn install` or `npm install`
+2. Open command palette, and type "MDX: Open Preview", or click the magnifying glass.
+
+### Button Component
+
+This is a button component.
+<Button>Boop</Button>
+
+### Card Component
+
+This is a card component.
+<Box width={256}>
+  <Card
+    p={1}
+    borderRadius={2}
+    boxShadow='0 0 16px rgba(0, 0, 0, .25)'>
+    <Image src={photo} />
+    <Box px={2}>
+      <Heading as='h3'>
+        Card
+      </Heading>
+      <Text fontSize={0}>
+        Small meta text
+      </Text>
+    </Box>
+  </Card>
+</Box>

@@ -1,0 +1,28 @@
+{
+  "name": "calculator",
+  "version": "0.1.0",
+  "license": "MIT",
+  "homepage": "http://ahfarmer.github.io/calculator",
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "gh-pages": "^1.1.0",
+    "prettier": "1.13.0",
+    "react-scripts": "^1.1.4"
+  },
+  "dependencies": {
+    "big.js": "^5.1.2",
+    "github-fork-ribbon-css": "^0.2.1",
+    "react": "^16.8.4",
+    "react-dom": "^16.8.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "deploy": "gh-pages -d build"
+  },
+  "prettier": {
+    "trailingComma": "all"
+  }
+}

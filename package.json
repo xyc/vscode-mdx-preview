@@ -1,0 +1,200 @@
+{
+    "name": "vscode-mdx-preview",
+    "displayName": "MDX Preview",
+    "description": "MDX Preview",
+    "version": "0.1.1",
+    "publisher": "xyc",
+    "repository": "https://github.com/xyc/vscode-mdx-preview",
+    "engines": {
+        "vscode": "^1.28.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "icon": "assets/icon.png",
+    "activationEvents": [
+        "onLanguage:markdown",
+        "onLanguage:mdx",
+        "onCommand:mdx-preview.commands.openPreview",
+        "onCommand:mdx-preview.commands.refreshPreview",
+        "onCommand:mdx-preview.commands.toggleUseWhiteBackground",
+        "onCommand:mdx-preview.commands.changeSecuritySettings"
+    ],
+    "main": "./build/extension/extension",
+    "contributes": {
+        "languages": [
+            {
+                "id": "mdx",
+                "aliases": [
+                    "Markdown React",
+                    "MDX",
+                    "mdx"
+                ],
+                "extensions": [
+                    "mdx"
+                ]
+            }
+        ],
+        "commands": [
+            {
+                "command": "mdx-preview.commands.openPreview",
+                "title": "Open Preview",
+                "category": "MDX",
+                "icon": {
+                    "light": "./assets/preview-light.png",
+                    "dark": "./assets/preview-dark.png"
+                }
+            },
+            {
+                "command": "mdx-preview.commands.refreshPreview",
+                "title": "Refresh Preview",
+                "category": "MDX"
+            },
+            {
+                "command": "mdx-preview.commands.toggleUseVscodeMarkdownStyles",
+                "title": "Toggle Using VSCode Markdown Styles",
+                "category": "MDX"
+            },
+            {
+                "command": "mdx-preview.commands.toggleUseWhiteBackground",
+                "title": "Toggle Using White Background",
+                "category": "MDX"
+            },
+            {
+                "command": "mdx-preview.commands.changeSecuritySettings",
+                "title": "Change Security Settings",
+                "category": "MDX"
+            }
+        ],
+        "menus": {
+            "editor/title": [
+                {
+                    "command": "mdx-preview.commands.openPreview",
+                    "when": "editorLangId == markdown",
+                    "group": "navigation"
+                },
+                {
+                    "command": "mdx-preview.commands.openPreview",
+                    "when": "editorLangId == mdx",
+                    "group": "navigation"
+                },
+                {
+                    "command": "mdx-preview.commands.openPreview",
+                    "when": "editorLangId == javascript",
+                    "group": "navigation"
+                }
+            ],
+            "commandPalette": [
+                {
+                    "command": "mdx-preview.commands.openPreview",
+                    "when": "editorLangId == markdown",
+                    "group": "navigation"
+                },
+                {
+                    "command": "mdx-preview.commands.openPreview",
+                    "when": "editorLangId == mdx",
+                    "group": "navigation"
+                },
+                {
+                    "command": "mdx-preview.commands.openPreview",
+                    "when": "editorLangId == javascript",
+                    "group": "navigation"
+                }
+            ]
+        },
+        "keybindings": [
+            {
+                "command": "mdx-preview.commands.openPreview",
+                "key": "ctrl+k x",
+                "mac": "cmd+k x"
+            }
+        ],
+        "configuration": {
+            "type": "object",
+            "title": "MDX Preview",
+            "properties": {
+                "mdx-preview.preview.previewOnChange": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "If set to true, previews on file change; If set to false, previews on file save",
+                    "scope": "resource"
+                },
+                "mdx-preview.preview.security": {
+                    "type": "string",
+                    "description": "Security policy settings",
+                    "default": "strict",
+                    "enum": [
+                        "strict",
+                        "disabled"
+                    ],
+                    "enumDescriptions": [
+                        "Do not allow insecure content or eval",
+                        "Allow insecure content (not recommended)"
+                    ],
+                    "scope": "resource"
+                },
+                "mdx-preview.preview.useVscodeMarkdownStyles": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Use VSCode Markdown Stylings",
+                    "scope": "resource"
+                },
+                "mdx-preview.preview.useWhiteBackground": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Use white background regardless of current theme settings",
+                    "scope": "resource"
+                },
+                "mdx-preview.preview.mdx.customLayoutFilePath": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Path of custom layout file to use",
+                    "scope": "resource"
+                }
+            }
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "yarn run build",
+        "vscode:package": "yarn run test && vsce package",
+        "build:extension": "tsc -p ./",
+        "build": "yarn run build:extension && yarn run build:webview-app",
+        "watch": "tsc -watch -p ./",
+        "start:webview-app": "cd packages/webview-app && yarn start",
+        "build:webview-app": "cd packages/webview-app && yarn run build",
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "test": "yarn run build && node ./node_modules/vscode/bin/test"
+    },
+    "devDependencies": {
+        "@types/jest": "^23.3.14",
+        "@types/node": "^8.10.25",
+        "jest": "^23.6.0",
+        "jest-environment-node": "^23.4.0",
+        "semver": "^5.6.0",
+        "ts-jest": "^23.6.0",
+        "tslint": "^5.8.0",
+        "typescript": "3.3.3333",
+        "vscode": "^1.1.28"
+    },
+    "dependencies": {
+        "@babel/core": "^7.3.4",
+        "@babel/plugin-proposal-class-properties": "^7.3.4",
+        "@babel/plugin-proposal-export-default-from": "^7.2.0",
+        "@babel/plugin-proposal-export-namespace-from": "^7.2.0",
+        "@babel/plugin-syntax-dynamic-import": "^7.2.0",
+        "@babel/preset-env": "^7.3.4",
+        "@babel/preset-react": "^7.0.0",
+        "@dxflow/comlink": "^3.1.3",
+        "@mdx-js/mdx": "^0.20.3",
+        "gray-matter": "^4.0.2",
+        "path-is-inside": "^1.0.2",
+        "precinct": "^6.1.1",
+        "remark-parse": "^6.0.3",
+        "remark-squeeze-paragraphs": "^3.0.3",
+        "resolve-from": "^4.0.0",
+        "unified": "^7.1.0"
+    },
+    "extensionPack": [
+        "silvenon.mdx"
+    ]
+}

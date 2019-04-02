@@ -1,0 +1,177 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Transpiler Tests Transpiles entry mdx file (no default export) 1`] = `
+"import React from 'react';
+import ReactDOM from 'react-dom';
+import { MDXTag } from '@mdx-js/tag';
+import { createLayout } from 'vscode-markdown-layout';
+
+const layoutProps = {
+  
+};
+export default class MDXContent extends React.Component {
+  constructor(props) {
+    super(props)
+    this.layout = createLayout({})
+  }
+  render() {
+    const { components, ...props } = this.props
+
+    return <MDXTag
+             name=\\"wrapper\\"
+             Layout={this.layout} layoutProps={Object.assign({}, layoutProps, props)}
+             components={components}>
+
+<MDXTag name=\\"p\\" components={components}>{\`hello\`}</MDXTag>
+           </MDXTag>
+  }
+}
+MDXContent.isMDXComponent = true
+ReactDOM.render(<MDXContent></MDXContent>, document.getElementById('vscode-mdx-preview_root'));"
+`;
+
+exports[`Transpiler Tests Transpiles entry mdx file (with default export) 1`] = `
+"import React from 'react';
+import ReactDOM from 'react-dom';
+import { MDXTag } from '@mdx-js/tag';
+import Layout from './layout';
+
+const layoutProps = {
+  
+};
+export default class MDXContent extends React.Component {
+  constructor(props) {
+    super(props)
+    this.layout = Layout
+  }
+  render() {
+    const { components, ...props } = this.props
+
+    return <MDXTag
+             name=\\"wrapper\\"
+             Layout={this.layout} layoutProps={Object.assign({}, layoutProps, props)}
+             components={components}>
+
+<MDXTag name=\\"p\\" components={components}>{\`hello\`}</MDXTag>
+           </MDXTag>
+  }
+}
+MDXContent.isMDXComponent = true
+ReactDOM.render(<MDXContent></MDXContent>, document.getElementById('vscode-mdx-preview_root'));"
+`;
+
+exports[`Transpiler Tests Transpiles entry mdx file with custom layout file (no default export) 1`] = `
+"import React from 'react';
+import ReactDOM from 'react-dom';
+import { MDXTag } from '@mdx-js/tag';
+import Layout from './mdx/customLayout.js';
+
+const layoutProps = {
+  
+};
+export default class MDXContent extends React.Component {
+  constructor(props) {
+    super(props)
+    this.layout = Layout
+  }
+  render() {
+    const { components, ...props } = this.props
+
+    return <MDXTag
+             name=\\"wrapper\\"
+             Layout={this.layout} layoutProps={Object.assign({}, layoutProps, props)}
+             components={components}>
+
+<MDXTag name=\\"p\\" components={components}>{\`hello\`}</MDXTag>
+           </MDXTag>
+  }
+}
+MDXContent.isMDXComponent = true
+ReactDOM.render(<MDXContent></MDXContent>, document.getElementById('vscode-mdx-preview_root'));"
+`;
+
+exports[`Transpiler Tests Transpiles entry mdx file with no vscode markdown styles (no default export) 1`] = `
+"import React from 'react';
+import ReactDOM from 'react-dom';
+import { MDXTag } from '@mdx-js/tag';
+
+
+const layoutProps = {
+  
+};
+export default class MDXContent extends React.Component {
+  constructor(props) {
+    super(props)
+    this.layout = null
+  }
+  render() {
+    const { components, ...props } = this.props
+
+    return <MDXTag
+             name=\\"wrapper\\"
+             
+             components={components}><MDXTag name=\\"p\\" components={components}>{\`hello\`}</MDXTag>
+           </MDXTag>
+  }
+}
+MDXContent.isMDXComponent = true
+ReactDOM.render(<MDXContent></MDXContent>, document.getElementById('vscode-mdx-preview_root'));"
+`;
+
+exports[`Transpiler Tests Transpiles entry mdx file with vscode markdown styles and white background config (no default export) 1`] = `
+"import React from 'react';
+import ReactDOM from 'react-dom';
+import { MDXTag } from '@mdx-js/tag';
+import { createLayout } from 'vscode-markdown-layout';
+
+const layoutProps = {
+  
+};
+export default class MDXContent extends React.Component {
+  constructor(props) {
+    super(props)
+    this.layout = createLayout({ forceLightTheme: true })
+  }
+  render() {
+    const { components, ...props } = this.props
+
+    return <MDXTag
+             name=\\"wrapper\\"
+             Layout={this.layout} layoutProps={Object.assign({}, layoutProps, props)}
+             components={components}>
+
+<MDXTag name=\\"p\\" components={components}>{\`hello\`}</MDXTag>
+           </MDXTag>
+  }
+}
+MDXContent.isMDXComponent = true
+ReactDOM.render(<MDXContent></MDXContent>, document.getElementById('vscode-mdx-preview_root'));"
+`;
+
+exports[`Transpiler Tests Transpiles non-entry mdx file (no default export) 1`] = `
+"import React from 'react';
+import { MDXTag } from '@mdx-js/tag';
+import { createLayout } from 'vscode-markdown-layout';
+
+const layoutProps = {
+  
+};
+export default class MDXContent extends React.Component {
+  constructor(props) {
+    super(props)
+    this.layout = createLayout({})
+  }
+  render() {
+    const { components, ...props } = this.props
+
+    return <MDXTag
+             name=\\"wrapper\\"
+             Layout={this.layout} layoutProps={Object.assign({}, layoutProps, props)}
+             components={components}>
+
+<MDXTag name=\\"p\\" components={components}>{\`hello\`}</MDXTag>
+           </MDXTag>
+  }
+}
+MDXContent.isMDXComponent = true"
+`;
