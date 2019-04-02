@@ -2,7 +2,7 @@
     "name": "vscode-mdx-preview",
     "displayName": "MDX Preview",
     "description": "MDX Preview",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "publisher": "xyc",
     "repository": "https://github.com/xyc/vscode-mdx-preview",
     "engines": {
