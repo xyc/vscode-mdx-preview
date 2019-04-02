@@ -155,6 +155,7 @@
         }
     },
     "scripts": {
+        "preinstall": "cd packages/webview-app && yarn install",
         "vscode:prepublish": "yarn run build",
         "vscode:package": "yarn run test && vsce package",
         "build:extension": "tsc -p ./",
