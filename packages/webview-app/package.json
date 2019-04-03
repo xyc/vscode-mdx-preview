@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@dxflow/mdx-deck-components": "^2.0.7",
+    "@dxflow/mdx-deck-layouts": "^2.0.0",
+    "@dxflow/mdx-deck-themes": "^2.0.2",
     "@dxflow/polestar": "^0.1.5",
     "@mdx-js/tag": "^0.20.3",
     "@types/create-subscription": "^16.4.2",

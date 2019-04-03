@@ -5,6 +5,9 @@ import { createPolestar, FetchMeta } from '@dxflow/polestar';
 import React from 'react';
 import ReactDOM from 'react-dom';
 const MDXTagModule = require('@mdx-js/tag'); // no type defs
+const MDXDeckComponents = require('@dxflow/mdx-deck-components');
+const MDXDeckLayouts = require('@dxflow/mdx-deck-layouts');
+const MDXDeckThemes = require('@dxflow/mdx-deck-themes');
 import vscodeMarkdownLayout from './components/VscodeMarkdownLayout';
 
 /**
@@ -40,10 +43,13 @@ function removeLoaders(url: string) {
 }
 
 const preloadedModules: { [key: string]: string } = {
-  "npm://react@latest": "npm://react@16.8.4",
-  "npm://react-dom@latest": "npm://react-dom@16.8.4",
-  "npm://@mdx-js/tag@latest": "npm://@mdx-js/tag@0.20.3",
-  "npm://vscode-markdown-layout@latest": "npm://vscode-markdown-layout@0.1.0",
+  'npm://react@latest': 'npm://react@16.8.4',
+  'npm://react-dom@latest': 'npm://react-dom@16.8.4',
+  'npm://@mdx-js/tag@latest': 'npm://@mdx-js/tag@0.20.3',
+  'npm://vscode-markdown-layout@latest': 'npm://vscode-markdown-layout@0.1.0',
+  'npm://@mdx-deck/components@latest': 'npm://@mdx-deck/components@2.0.3',
+  'npm://@mdx-deck/layouts@latest': 'npm://@mdx-deck/layouts@2.0.0',
+  'npm://@mdx-deck/themes@latest': 'npm://@mdx-deck/themes@2.0.2',
 };
 
 /**
@@ -121,7 +127,10 @@ const preloadPromise = Promise.all([
   polestar.preloadModule("npm://react@16.8.4", React),
   polestar.preloadModule("npm://react-dom@16.8.4", ReactDOM),
   polestar.preloadModule("npm://@mdx-js/tag@0.20.3", MDXTagModule),
-  polestar.preloadModule("npm://vscode-markdown-layout@0.1.0", vscodeMarkdownLayout)
+  polestar.preloadModule("npm://vscode-markdown-layout@0.1.0", vscodeMarkdownLayout),
+  polestar.preloadModule('npm://@mdx-deck/components@2.0.3', MDXDeckComponents),
+  polestar.preloadModule('npm://@mdx-deck/layouts@2.0.0', MDXDeckLayouts),
+  polestar.preloadModule('npm://@mdx-deck/themes@2.0.2', MDXDeckThemes)
 ]);
 
 export enum EvaluationProgress {

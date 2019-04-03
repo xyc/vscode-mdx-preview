@@ -186,6 +186,7 @@
         "@babel/preset-env": "^7.3.4",
         "@babel/preset-react": "^7.0.0",
         "@dxflow/comlink": "^3.1.3",
+        "@mdx-deck/mdx-plugin": "^2.0.6",
         "@mdx-js/mdx": "^0.20.3",
         "gray-matter": "^4.0.2",
         "path-is-inside": "^1.0.2",

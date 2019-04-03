@@ -1,4 +1,5 @@
 import mdx from '@mdx-js/mdx';
+import mdxDeckPlugin from '@mdx-deck/mdx-plugin';
 import hasDefaultExport from './hasDefaultExport';
 import * as path from 'path';
 
@@ -40,9 +41,11 @@ const wrapCompiledMdx = (compiledMDX: string, isEntry: boolean) => {
     // entry MDX, render on webview DOM
     return `import React from 'react';
 import ReactDOM from 'react-dom';
+import { MDXDeck } from '@mdx-deck/components';
 import { MDXTag } from '@mdx-js/tag';
 ${compiledMDX}
-ReactDOM.render(<MDXContent></MDXContent>, document.getElementById('vscode-mdx-preview_root'));`;
+const App = () => <MDXDeck slides={slides} />;
+ReactDOM.render(<App></App>, document.getElementById('vscode-mdx-preview_root'));`;
   } else {
     // transclusion
     return `import React from 'react';
@@ -59,6 +62,9 @@ export const mdxTranspileAsync = async (mdxText: string, isEntry: boolean, previ
   } else {
     mdxTextToCompile = mdxText;
   }
-  const compiledMDX = await mdx(mdxTextToCompile);
+  const options = {
+    mdPlugins: [mdxDeckPlugin],
+  };
+  const compiledMDX = await mdx(mdxTextToCompile, options);
   return wrapCompiledMdx(compiledMDX, isEntry);
 };

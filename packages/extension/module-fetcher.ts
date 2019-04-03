@@ -15,7 +15,7 @@ const NOOP_MODULE = `Object.defineProperty(exports, '__esModule', { value: true 
 
 const NODE_CORE_MODULES = new Set([
   'stream',
-  'querystring',
+  // 'querystring',
   'module',
 
   'crypto',
@@ -39,6 +39,9 @@ export async function fetchLocal(pathname, isBare, preview: Preview) {
           code: NOOP_MODULE,
           dependencies: [],
         };
+      }
+      if (pathname === 'querystring') {
+        pathname = 'query-string';
       }
 
       fsPath = resolveFrom(entryFsDirectory, pathname);
