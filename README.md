@@ -1,4 +1,4 @@
-# MDX Preview for Visual Studio Code
+# [MDX Preview for Visual Studio Code](https://github.com/xyc/vscode-mdx-preview)
 
 MDX Preview lets you preview [MDX](https://mdxjs.com) seamlessly. Write markdown / JSX, see it live refresh and get instant visual feedback.
 
