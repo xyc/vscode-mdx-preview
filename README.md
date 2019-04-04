@@ -73,6 +73,7 @@ MDX Preview transpiles your `.mdx` file using `@mdx-js/mdx`, sends the initial f
 
 ## Road map
 - [ ] Scroll Sync
+- [ ] TypeScript support
 - [ ] remark/rehype plugins
 - [ ] Integrations with gatsby / x0 /...
 
