@@ -52,7 +52,9 @@ ReactDOM.render(
 );
 ```
 
-If you encountered service worker / local storage errors, that's because they are not available inside VS Code webview.
+VS Code webview limitations
+- Service worker / Local storage are not available. 
+- Use `MemoryRouter` if you are using React Router.
 
 ### Security
 Code will only be evaluated inside VS Code extension webview's isolated iframe. The MDX files can only require dependencies within your active workspace folders. By default, only HTTPS content is allowed within the webview. Of course, you still need to **make sure you trust the MDX file you preview, AND trust the files inside your workspace**. Note that with the default Content Security Policy, you would not be able to preview a LiveEditor. 
