@@ -8,7 +8,10 @@ MDX Preview lets you preview [MDX](https://mdxjs.com) seamlessly. Write markdown
 
 ### Instant preview as you type without starting a dev server or building
 
-To get started, run `yarn install` or `npm install` so that you have the necessary npm dependencies in your workspace. To preview an `md` or `mdx` file, open command palette, and type "MDX: Open Preview"; or click the magnifying glass.
+To get started:
+
+1. run `yarn install` or `npm install` so that you have the necessary npm dependencies in your workspace, and navigate to your `md` or `mdx` file; or just create an untitled file and type some mdx.
+2. Open command palette, and type "MDX: Open Preview"; or click the magnifying glass.
 
 [MDX Extension](https://github.com/silvenon/vscode-mdx) is recommended for syntax highlighting of MDX files.
 
