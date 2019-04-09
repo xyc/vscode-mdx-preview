@@ -8,13 +8,7 @@ class App extends Component {
   componentWillUnmount() {}
 
   render() {
-    return (
-      <>
-        <LoadingBar />
-        <div id="root">
-        </div>
-      </>
-    );
+    return <LoadingBar />;
   }
 }
 

@@ -87,7 +87,7 @@ blockquote {
         ${styleNodeHTML}
     </head>
     <body>
-        <div id="vscode-mdx-preview_root"></div>
+        <div id="root"></div>
         <script crossorigin="anonymous" src="${runTimeMainSrc}"></script>
         <script crossorigin="anonymous" src="${chunkSrc}"></script>
         <script crossorigin="anonymous" src="${scriptSrc}"></script>

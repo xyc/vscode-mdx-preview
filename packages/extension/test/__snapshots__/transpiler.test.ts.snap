@@ -27,7 +27,7 @@ export default class MDXContent extends React.Component {
   }
 }
 MDXContent.isMDXComponent = true
-ReactDOM.render(<MDXContent></MDXContent>, document.getElementById('vscode-mdx-preview_root'));"
+ReactDOM.render(<MDXContent></MDXContent>, document.getElementById('root'));"
 `;
 
 exports[`Transpiler Tests Transpiles entry mdx file (with default export) 1`] = `
@@ -57,7 +57,7 @@ export default class MDXContent extends React.Component {
   }
 }
 MDXContent.isMDXComponent = true
-ReactDOM.render(<MDXContent></MDXContent>, document.getElementById('vscode-mdx-preview_root'));"
+ReactDOM.render(<MDXContent></MDXContent>, document.getElementById('root'));"
 `;
 
 exports[`Transpiler Tests Transpiles entry mdx file with custom layout file (no default export) 1`] = `
@@ -87,7 +87,7 @@ export default class MDXContent extends React.Component {
   }
 }
 MDXContent.isMDXComponent = true
-ReactDOM.render(<MDXContent></MDXContent>, document.getElementById('vscode-mdx-preview_root'));"
+ReactDOM.render(<MDXContent></MDXContent>, document.getElementById('root'));"
 `;
 
 exports[`Transpiler Tests Transpiles entry mdx file with no vscode markdown styles (no default export) 1`] = `
@@ -115,7 +115,7 @@ export default class MDXContent extends React.Component {
   }
 }
 MDXContent.isMDXComponent = true
-ReactDOM.render(<MDXContent></MDXContent>, document.getElementById('vscode-mdx-preview_root'));"
+ReactDOM.render(<MDXContent></MDXContent>, document.getElementById('root'));"
 `;
 
 exports[`Transpiler Tests Transpiles entry mdx file with vscode markdown styles and white background config (no default export) 1`] = `
@@ -145,7 +145,7 @@ export default class MDXContent extends React.Component {
   }
 }
 MDXContent.isMDXComponent = true
-ReactDOM.render(<MDXContent></MDXContent>, document.getElementById('vscode-mdx-preview_root'));"
+ReactDOM.render(<MDXContent></MDXContent>, document.getElementById('root'));"
 `;
 
 exports[`Transpiler Tests Transpiles non-entry mdx file (no default export) 1`] = `

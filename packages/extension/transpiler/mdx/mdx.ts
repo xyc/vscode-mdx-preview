@@ -42,7 +42,7 @@ const wrapCompiledMdx = (compiledMDX: string, isEntry: boolean) => {
 import ReactDOM from 'react-dom';
 import { MDXTag } from '@mdx-js/tag';
 ${compiledMDX}
-ReactDOM.render(<MDXContent></MDXContent>, document.getElementById('vscode-mdx-preview_root'));`;
+ReactDOM.render(<MDXContent></MDXContent>, document.getElementById('root'));`;
   } else {
     // transclusion
     return `import React from 'react';

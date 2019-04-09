@@ -7,4 +7,4 @@ import App from './App';
 
 initRPCWebviewSide();
 
-ReactDOM.render(<App />, document.getElementById('vscode-mdx-preview_root'));
+ReactDOM.render(<App />, document.getElementById('root'));
