@@ -40,8 +40,8 @@ function removeLoaders(url: string) {
 }
 
 const preloadedModules: { [key: string]: string } = {
-  "npm://react@latest": "npm://react@16.8.4",
-  "npm://react-dom@latest": "npm://react-dom@16.8.4",
+  "npm://react@latest": "npm://react@16.8.6",
+  "npm://react-dom@latest": "npm://react-dom@16.8.6",
   "npm://@mdx-js/tag@latest": "npm://@mdx-js/tag@0.20.3",
   "npm://vscode-markdown-layout@latest": "npm://vscode-markdown-layout@0.1.0",
 };
@@ -105,7 +105,9 @@ const rpcFetcher = async (url: string, meta: FetchMeta) => {
 const polestar = createPolestar({
   globals: {
     process: {
-      env: {},
+      env: {
+        NODE_ENV: 'production'
+      },
     },
     global: {},
   },
@@ -118,8 +120,8 @@ const polestar = createPolestar({
 });
 
 const preloadPromise = Promise.all([
-  polestar.preloadModule("npm://react@16.8.4", React),
-  polestar.preloadModule("npm://react-dom@16.8.4", ReactDOM),
+  polestar.preloadModule("npm://react@16.8.6", React),
+  polestar.preloadModule("npm://react-dom@16.8.6", ReactDOM),
   polestar.preloadModule("npm://@mdx-js/tag@0.20.3", MDXTagModule),
   polestar.preloadModule("npm://vscode-markdown-layout@0.1.0", vscodeMarkdownLayout)
 ]);
