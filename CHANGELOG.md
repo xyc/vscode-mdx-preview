@@ -3,6 +3,9 @@ All notable changes to the "vscode-mdx-preview" extension will be documented in 
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.1.4] - 04/08/2019
+- update webview DOM structure (default renders to #root)
+
 ## [0.1.3] - 04/08/2019
 - Fixes [#2](https://github.com/xyc/vscode-mdx-preview/issues/2)
 - Update default React to 16.8.6
