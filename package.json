@@ -11,6 +11,13 @@
     "categories": [
         "Programming Languages"
     ],
+    "keywords": [
+        "Preview",
+        "mdx",
+        "markdown",
+        "JavaScript",
+        "React"
+    ],
     "icon": "assets/icon.png",
     "activationEvents": [
         "onLanguage:markdown",
