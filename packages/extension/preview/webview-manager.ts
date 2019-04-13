@@ -6,6 +6,7 @@ import { getCSP } from '../security/CSP';
 import { initRPCExtensionSide } from '../rpc-extension';
 
 const VIEW_TYPE = 'mdx.preview';
+const MDX_PREVIEW_FOCUS_CONTEXT_KEY = 'mdxPreviewFocus';
 
 let panel: (vscode.WebviewPanel | undefined);
 let panelDoc: (vscode.TextDocument | undefined);
@@ -135,8 +136,11 @@ export function createOrShowPanel(preview: Preview) {
         panelDoc = preview.doc;
         setPanelHTMLFromPreview(preview);
 
+        vscode.commands.executeCommand('setContext', MDX_PREVIEW_FOCUS_CONTEXT_KEY, true);
+
         panel.onDidDispose(() => dispose(), null, disposables);        
-        panel.onDidChangeViewState(e => {
+        panel.onDidChangeViewState(({ webviewPanel }) => {
+            vscode.commands.executeCommand('setContext', MDX_PREVIEW_FOCUS_CONTEXT_KEY, webviewPanel.active);
         }, null, disposables);
         
         preview.initWebviewHandshakePromise();
@@ -149,6 +153,8 @@ export function createOrShowPanel(preview: Preview) {
             panelDoc = preview.doc;
         }
         panel.reveal(previewColumn);
+
+        vscode.commands.executeCommand('setContext', MDX_PREVIEW_FOCUS_CONTEXT_KEY, true);
     }
     return panel;
 }

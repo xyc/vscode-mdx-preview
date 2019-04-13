@@ -89,6 +89,11 @@
                     "command": "mdx-preview.commands.openPreview",
                     "when": "editorLangId == javascript",
                     "group": "navigation"
+                },
+                {
+                    "command": "mdx-preview.commands.refreshPreview",
+                    "when": "mdxPreviewFocus",
+                    "group": "navigation"
                 }
             ],
             "commandPalette": [
