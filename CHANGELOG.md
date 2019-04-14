@@ -3,6 +3,9 @@ All notable changes to the "vscode-mdx-preview" extension will be documented in 
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.1.5] - 04/13/2019
+- Add a preview refresh Button
+
 ## [0.1.4] - 04/08/2019
 - update webview DOM structure (default renders to #root)
 

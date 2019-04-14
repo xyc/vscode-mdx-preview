@@ -2,7 +2,7 @@
     "name": "vscode-mdx-preview",
     "displayName": "MDX Preview",
     "description": "MDX Preview",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "publisher": "xyc",
     "repository": "https://github.com/xyc/vscode-mdx-preview",
     "engines": {
@@ -55,7 +55,11 @@
             {
                 "command": "mdx-preview.commands.refreshPreview",
                 "title": "Refresh Preview",
-                "category": "MDX"
+                "category": "MDX",
+                "icon": {
+                    "light": "./assets/refresh-light.png",
+                    "dark": "./assets/refresh-dark.png"
+                }
             },
             {
                 "command": "mdx-preview.commands.toggleUseVscodeMarkdownStyles",
