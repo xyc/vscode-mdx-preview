@@ -81,12 +81,33 @@ export async function fetchLocal(pathname, isBare, preview: Preview) {
       code = await mdxTranspileAsync(code, false, preview);
     }
 
+    if (!fsPath.split(path.sep).includes('node_modules')) {
+      console.log(`Transpiling: ${pathname}`);
+      code = (await babelTransformAsync(code)).code;
+    } else {
+      // Only transpile npm packages if it's es module
+      // isEsModule function is from
+      // https://github.com/CompuIves/codesandbox-client/blob/13c9eda9bfaa38dec6a1699e31233bee388857bc/packages/app/src/sandbox/eval/utils/is-es-module.js
+      // Copyright (C) 2018  Ives van Hoorne
+      const isESModule = /(;|^)(import|export)(\s|{)/gm.test(code);
+      if (isESModule) {
+        console.log(`Transpiling: ${pathname}`);
+        code = (await babelTransformAsync(code)).code;
+      } else {
+        code = code;
+      }
+    }
+
     // NOTE precinct works before babel transpiling
     const dependencyNames = precinct(code);
     // Figure out dependencies from code
     // Don't care about dependency version ranges here, assuming user has already done
     // yarn install or npm install.
     const dependencies = dependencyNames.map(dependencyName => {
+      if (!dependencyName) {
+        // precinct can't handle dynamic import, TODO: refactor this
+        return;
+      }
       if (
         !dependencyName.startsWith(SEP) &&
         !dependencyName.startsWith('..' + SEP) &&
@@ -105,26 +126,9 @@ export async function fetchLocal(pathname, isBare, preview: Preview) {
       return dependencyUrl;
     });
 
-    let transpiledCode: string;
-    if (!fsPath.split(path.sep).includes('node_modules')) {
-      console.log(`Transpiling: ${pathname}`);
-      transpiledCode = (await babelTransformAsync(code)).code;
-    } else {
-      // Only transpile npm packages if it's es module
-      // isEsModule function is from
-      // https://github.com/CompuIves/codesandbox-client/blob/13c9eda9bfaa38dec6a1699e31233bee388857bc/packages/app/src/sandbox/eval/utils/is-es-module.js
-      // Copyright (C) 2018  Ives van Hoorne
-      const isESModule = /(;|^)(import|export)(\s|{)/gm.test(code);
-      if (isESModule) {
-        console.log(`Transpiling: ${pathname}`);
-        transpiledCode = (await babelTransformAsync(code)).code;
-      } else {
-        transpiledCode = code;
-      }
-    }
     return {
       fsPath,
-      code: transpiledCode,
+      code,
       dependencies,
     };
   } catch (error) {
