@@ -15,6 +15,11 @@ const babelOptions = {
   ]
 };
 
+// export const transformAsync = code => {
+//   return babel.transformAsync(code, babelOptions);
+// };
+
+import { transform } from "sucrase";
 export const transformAsync = code => {
-  return babel.transformAsync(code, babelOptions);
+  return transform(code, { transforms: ["jsx", "typescript", "imports"] });
 };
