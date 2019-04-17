@@ -3,7 +3,7 @@ import * as babel from "@babel/core";
 // can probably load directory .babelrc config from here?
 const babelOptions = {
   "presets": [
-    babel.createConfigItem(require("@babel/preset-env")),
+    babel.createConfigItem([require("@babel/preset-env"), { exclude: ["transform-regenerator"] }]),
     babel.createConfigItem(require("@babel/preset-react")),
   ],
   "plugins": [
@@ -12,14 +12,16 @@ const babelOptions = {
     babel.createConfigItem(require("@babel/plugin-proposal-export-namespace-from")),
     babel.createConfigItem(require("@babel/plugin-proposal-class-properties")),
     babel.createConfigItem(require("@babel/plugin-syntax-dynamic-import")),
+    babel.createConfigItem(require("babel-plugin-transform-dynamic-import")),
   ]
 };
 
-// export const transformAsync = code => {
-//   return babel.transformAsync(code, babelOptions);
-// };
-
-import { transform } from "sucrase";
 export const transformAsync = code => {
-  return transform(code, { transforms: ["jsx", "typescript", "imports"] });
+  return babel.transformAsync(code, babelOptions);
 };
+
+// TODO: provide a preference to use sucrase
+// import { transform } from "sucrase";
+// export const transformAsync = code => {
+//   return transform(code, { transforms: ["jsx", "typescript", "imports"] });
+// };
