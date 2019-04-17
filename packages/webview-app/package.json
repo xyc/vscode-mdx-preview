@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@dxflow/polestar": "^0.1.5",
+    "@dxflow/polestar": "^0.1.7",
     "@mdx-js/tag": "^0.20.3",
     "@types/create-subscription": "^16.4.2",
     "@types/jest": "24.0.9",

@@ -179,6 +179,7 @@
         "watch": "tsc -watch -p ./",
         "start:webview-app": "cd packages/webview-app && yarn start",
         "build:webview-app": "cd packages/webview-app && yarn run build",
+        "build:polestar": "cd packages/polestar && yarn run build",
         "postinstall": "node ./node_modules/vscode/bin/install",
         "test": "yarn run build && node ./node_modules/vscode/bin/test"
     },
