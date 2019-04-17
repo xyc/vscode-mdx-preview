@@ -1,0 +1,3 @@
+[submodule "packages/polestar"]
+	path = packages/polestar
+	url = git@github.com:dxflow/polestar.git

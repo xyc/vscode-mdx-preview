@@ -179,6 +179,7 @@
         "watch": "tsc -watch -p ./",
         "start:webview-app": "cd packages/webview-app && yarn start",
         "build:webview-app": "cd packages/webview-app && yarn run build",
+        "build:polestar": "cd packages/polestar && yarn run build",
         "postinstall": "node ./node_modules/vscode/bin/install",
         "test": "yarn run build && node ./node_modules/vscode/bin/test"
     },
@@ -203,12 +204,14 @@
         "@babel/preset-react": "^7.0.0",
         "@dxflow/comlink": "^3.1.3",
         "@mdx-js/mdx": "^0.20.3",
+        "babel-plugin-transform-dynamic-import": "^2.1.0",
         "gray-matter": "^4.0.2",
         "path-is-inside": "^1.0.2",
         "precinct": "^6.1.1",
         "remark-parse": "^6.0.3",
         "remark-squeeze-paragraphs": "^3.0.3",
         "resolve-from": "^4.0.0",
+        "sucrase": "^3.10.1",
         "unified": "^7.1.0"
     },
     "extensionPack": [

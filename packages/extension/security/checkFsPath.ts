@@ -29,11 +29,12 @@ export function handleDidChangeWorkspaceFolders() {
   rootDirectoryCache.clear();
 }
 
-export function checkFsPath(entryFsDirectory: string, fsPath: string): void | never {
+export function checkFsPath(entryFsDirectory: string, fsPath: string): boolean {
   const rootDirectory = getRootDirectoryPath(entryFsDirectory);
   if (!pathIsInside(fsPath, rootDirectory)) {
-    throw new PathAccessDeniedError(fsPath);
+    return false;
   }
+  return true;
 }
 
 class CustomError extends Error {

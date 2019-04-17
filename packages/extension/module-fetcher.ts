@@ -3,7 +3,7 @@ import * as path from 'path';
 import { Preview } from './preview/preview-manager';
 import { mdxTranspileAsync } from './transpiler/mdx/mdx';
 import { transformAsync as babelTransformAsync } from './transpiler/babel';
-import { checkFsPath } from './security/checkFsPath';
+import { checkFsPath, PathAccessDeniedError } from './security/checkFsPath';
 
 const resolveFrom = require('resolve-from');
 
@@ -13,13 +13,46 @@ const NOOP_MODULE = `Object.defineProperty(exports, '__esModule', { value: true 
   function noop() {}
   exports.default = noop;`;
 
+// https://github.com/calvinmetcalf/rollup-plugin-node-builtins
 const NODE_CORE_MODULES = new Set([
-  'stream',
-  'querystring',
+  // unshimmable
+  'dns',
+  'dgram',
+  'child_process',
+  'cluster',
   'module',
+  'net',
+  'readline',
+  'repl',
+  'tls',
 
   'crypto',
   'exports', // precinct bug
+]);
+
+const SHIMMABLE_NODE_CORE_MODULES = new Set([
+  'process',
+  'events',
+  'util',
+  'os',
+  'fs',
+  'path',
+  'buffer',
+  'url',
+  'string_decoder',
+  'punycode',
+  'querystring',
+  'stream',
+  'http',
+  'https',
+  'assert',
+  'constants',
+  'timers',
+  'console',
+  'vm',
+  'zlib',
+  'tty',
+  'domain'
 ]);
 
 const SEP = path.sep;
@@ -49,7 +82,16 @@ export async function fetchLocal(pathname, isBare, preview: Preview) {
       );
     }
 
-    checkFsPath(entryFsDirectory, fsPath);
+    if(!checkFsPath(entryFsDirectory, fsPath)) {
+      if (SHIMMABLE_NODE_CORE_MODULES.has(pathname)) {
+        return {
+          fsPath: `/externalModules/${pathname}`,
+          code: NOOP_MODULE,
+          dependencies: [],
+        };
+      }
+      throw new PathAccessDeniedError(fsPath);
+    }
 
     let code = fs.readFileSync(fsPath).toString();
     const extname = path.extname(fsPath);
@@ -87,6 +129,10 @@ export async function fetchLocal(pathname, isBare, preview: Preview) {
     // Don't care about dependency version ranges here, assuming user has already done
     // yarn install or npm install.
     const dependencies = dependencyNames.map(dependencyName => {
+      // precinct returns undefined for dynamic import expression, TODO: refactor this
+      if (!dependencyName) {
+        return;
+      }
       if (
         !dependencyName.startsWith(SEP) &&
         !dependencyName.startsWith('..' + SEP) &&
@@ -105,10 +151,9 @@ export async function fetchLocal(pathname, isBare, preview: Preview) {
       return dependencyUrl;
     });
 
-    let transpiledCode: string;
     if (!fsPath.split(path.sep).includes('node_modules')) {
       console.log(`Transpiling: ${pathname}`);
-      transpiledCode = (await babelTransformAsync(code)).code;
+      code = (await babelTransformAsync(code)).code;
     } else {
       // Only transpile npm packages if it's es module
       // isEsModule function is from
@@ -117,14 +162,15 @@ export async function fetchLocal(pathname, isBare, preview: Preview) {
       const isESModule = /(;|^)(import|export)(\s|{)/gm.test(code);
       if (isESModule) {
         console.log(`Transpiling: ${pathname}`);
-        transpiledCode = (await babelTransformAsync(code)).code;
+        code = (await babelTransformAsync(code)).code;
       } else {
-        transpiledCode = code;
+        code = code;
       }
     }
+
     return {
       fsPath,
-      code: transpiledCode,
+      code,
       dependencies,
     };
   } catch (error) {
