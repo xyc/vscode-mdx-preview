@@ -16,12 +16,12 @@ const babelOptions = {
   ]
 };
 
-export const transformAsync = code => {
-  return babel.transformAsync(code, babelOptions);
-};
+// export const transformAsync = code => {
+//   return babel.transformAsync(code, babelOptions);
+// };
 
 // TODO: provide a preference to use sucrase
-// import { transform } from "sucrase";
-// export const transformAsync = code => {
-//   return transform(code, { transforms: ["jsx", "typescript", "imports"] });
-// };
+import { transform } from "sucrase";
+export const transformAsync = code => {
+  return transform(code, { transforms: ["jsx", "typescript", "imports"] });
+};

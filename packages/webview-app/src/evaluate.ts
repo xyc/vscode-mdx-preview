@@ -1,7 +1,7 @@
 import ValueEventEmitter from './lib/ValueEventEmitter';
 import { hasRuntimeError, dismissRuntimeErrors, handleRuntimeError } from './lib/errors';
 import { ExtensionHandle } from './rpc-webview';
-import { createPolestar, FetchMeta } from '@dxflow/polestar';
+import { createPolestar, splitNPMURL, FetchMeta } from '@dxflow/polestar';
 import React from 'react';
 import ReactDOM from 'react-dom';
 const MDXTagModule = require('@mdx-js/tag'); // no type defs
@@ -62,6 +62,39 @@ const rpcFetcher = async (url: string, meta: FetchMeta) => {
     };
   }
 
+  const splitResult = splitNPMURL(url);
+  const { originalRequest, requiredById } = meta;
+  let request, isBare;
+  if (splitResult) {
+    let { name = '', version, pathname = '' } = splitResult;
+    request = name + pathname;
+    isBare = true;
+  } else {
+    request = originalRequest;
+    isBare = false;
+  }
+
+  const fetchResult = await ExtensionHandle.fetch(
+    request,
+    isBare,
+    requiredById
+  );
+  if (!fetchResult) {
+    // TODO: yarn add if we didn't install the npm dependency 
+    throw new Error(`Fetching ${request} failed.`);
+  }
+  const { fsPath, code, dependencies, css } = fetchResult;
+
+  // console.log('fetched:', fsPath, code, dependencies, `isCSS: ${css}`);
+  return {
+    id: fsPath, // `vfs://${fsPath}`,
+    url,
+    code,
+    dependencies,
+    css,
+  };
+  
+  /*
   const splitResult = splitURL(url);
   if (splitResult) {
     let { protocol, name = '', version, pathname = '' } = splitResult;
@@ -97,6 +130,7 @@ const rpcFetcher = async (url: string, meta: FetchMeta) => {
   } else {
     throw new Error(`Invalid url: ${url}, ${JSON.stringify(meta, null, 2)}`);
   }
+  */
 };
 
 /**
@@ -149,7 +183,8 @@ export async function evaluate(code: string, entryFilePath: string, entryFileDep
       entryFileDependencies,
       code,
       undefined,
-      `vfs://${entryFilePath}`
+      entryFilePath
+      // `vfs://${entryFilePath}`
     );
     const evaluationEndTime = performance.now();
     ExtensionHandle.reportPerformance(evaluationEndTime - evaluationStartTime);

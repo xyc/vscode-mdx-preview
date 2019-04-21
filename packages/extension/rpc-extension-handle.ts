@@ -1,7 +1,7 @@
 const { performance } = require('perf_hooks');
 import { Preview } from './preview/preview-manager';
 
-import { fetchLocal } from './module-fetcher';
+import { fetchLocal } from './module-fetcher/module-fetcher';
 
 class ExtensionHandle {
   preview: Preview;
@@ -19,8 +19,8 @@ class ExtensionHandle {
     performance.measure('preview duration', 'preview/start', 'preview/end');
   }
 
-  async fetch(pathname, isBare) {
-    return fetchLocal(pathname, isBare, this.preview);
+  async fetch(pathname, isBare, parentId) {
+    return fetchLocal(pathname, isBare, parentId, this.preview);
   }
 }
 

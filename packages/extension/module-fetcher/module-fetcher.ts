@@ -1,9 +1,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { Preview } from './preview/preview-manager';
-import { mdxTranspileAsync } from './transpiler/mdx/mdx';
-import { transformAsync as babelTransformAsync } from './transpiler/babel';
-import { checkFsPath, PathAccessDeniedError } from './security/checkFsPath';
+import { Preview } from '../preview/preview-manager';
+import { mdxTranspileAsync } from '../transpiler/mdx/mdx';
+import { transformAsync as babelTransformAsync } from '../transpiler/babel';
+import { checkFsPath, PathAccessDeniedError } from '../security/checkFsPath';
 
 const resolveFrom = require('resolve-from');
 
@@ -57,7 +57,7 @@ const SHIMMABLE_NODE_CORE_MODULES = new Set([
 
 const SEP = path.sep;
 
-export async function fetchLocal(pathname, isBare, preview: Preview) {
+export async function fetchLocal(pathname, isBare, parentId, preview: Preview) {
   try {
     const entryFsDirectory = preview.entryFsDirectory;
     if (!entryFsDirectory) {
@@ -77,8 +77,8 @@ export async function fetchLocal(pathname, isBare, preview: Preview) {
       fsPath = resolveFrom(entryFsDirectory, pathname);
     } else {
       fsPath = resolveFrom(
-        path.dirname(pathname),
-        '.' + SEP + path.basename(pathname)
+        path.dirname(parentId),
+        pathname
       );
     }
 
@@ -111,7 +111,7 @@ export async function fetchLocal(pathname, isBare, preview: Preview) {
       };
     }
     if (/\.(gif|png|jpe?g|svg)$/i.test(extname)) {
-      const fsPath = path.resolve(pathname);
+      // const fsPath = path.resolve(path.dirname(parentId), pathname);
       const code = `module.exports = "vscode-resource://${fsPath}"`;
       return {
         fsPath,
@@ -143,16 +143,20 @@ export async function fetchLocal(pathname, isBare, preview: Preview) {
         return `npm://${dependencyName}`;
       }
 
+      return dependencyName;
+
+      /*
       const suffix = (dependencyName === '.' || dependencyName.endsWith(SEP)) ? SEP : '';
       const dependencyUrl = `vfs://${path.resolve(
         path.dirname(fsPath),
         dependencyName
       )}${suffix}`;
       return dependencyUrl;
+      */
     });
 
     if (!fsPath.split(path.sep).includes('node_modules')) {
-      console.log(`Transpiling: ${pathname}`);
+      console.log(`Transpiling: ${fsPath}`);
       code = (await babelTransformAsync(code)).code;
     } else {
       // Only transpile npm packages if it's es module
@@ -161,7 +165,7 @@ export async function fetchLocal(pathname, isBare, preview: Preview) {
       // Copyright (C) 2018  Ives van Hoorne
       const isESModule = /(;|^)(import|export)(\s|{)/gm.test(code);
       if (isESModule) {
-        console.log(`Transpiling: ${pathname}`);
+        console.log(`Transpiling: ${fsPath}`);
         code = (await babelTransformAsync(code)).code;
       } else {
         code = code;
