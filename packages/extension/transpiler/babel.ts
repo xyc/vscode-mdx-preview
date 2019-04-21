@@ -23,5 +23,9 @@ const babelOptions = {
 // TODO: provide a preference to use sucrase
 import { transform } from "sucrase";
 export const transformAsync = code => {
-  return transform(code, { transforms: ["jsx", "typescript", "imports"] });
+  try {
+    return transform(code, { transforms: ["jsx", "typescript", "imports"] });
+  } catch (error) {
+    return babel.transformAsync(code, babelOptions);
+  }
 };

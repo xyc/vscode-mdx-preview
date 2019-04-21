@@ -57,7 +57,7 @@ const SHIMMABLE_NODE_CORE_MODULES = new Set([
 
 const SEP = path.sep;
 
-export async function fetchLocal(pathname, isBare, parentId, preview: Preview) {
+export async function fetchLocal(request, isBare, parentId, preview: Preview) {
   try {
     const entryFsDirectory = preview.entryFsDirectory;
     if (!entryFsDirectory) {
@@ -66,26 +66,23 @@ export async function fetchLocal(pathname, isBare, parentId, preview: Preview) {
 
     let fsPath;
     if (isBare) {
-      if (NODE_CORE_MODULES.has(pathname)) {
+      if (NODE_CORE_MODULES.has(request)) {
         return {
-          fsPath: `/externalModules/${pathname}`,
+          fsPath: `/externalModules/${request}`,
           code: NOOP_MODULE,
           dependencies: [],
         };
       }
 
-      fsPath = resolveFrom(entryFsDirectory, pathname);
+      fsPath = resolveFrom(entryFsDirectory, request);
     } else {
-      fsPath = resolveFrom(
-        path.dirname(parentId),
-        pathname
-      );
+      fsPath = resolveFrom(path.dirname(parentId), request);
     }
 
     if(!checkFsPath(entryFsDirectory, fsPath)) {
-      if (SHIMMABLE_NODE_CORE_MODULES.has(pathname)) {
+      if (SHIMMABLE_NODE_CORE_MODULES.has(request)) {
         return {
-          fsPath: `/externalModules/${pathname}`,
+          fsPath: `/externalModules/${request}`,
           code: NOOP_MODULE,
           dependencies: [],
         };
@@ -178,7 +175,7 @@ export async function fetchLocal(pathname, isBare, parentId, preview: Preview) {
       dependencies,
     };
   } catch (error) {
-    console.error(error, pathname);
+    console.error(error, request);
     preview.webviewHandle.showPreviewError({ message: error.message });
   }
 }

@@ -19,8 +19,8 @@ class ExtensionHandle {
     performance.measure('preview duration', 'preview/start', 'preview/end');
   }
 
-  async fetch(pathname, isBare, parentId) {
-    return fetchLocal(pathname, isBare, parentId, this.preview);
+  async fetch(request, isBare, parentId) {
+    return fetchLocal(request, isBare, parentId, this.preview);
   }
 }
 

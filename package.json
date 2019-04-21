@@ -191,7 +191,6 @@
         "semver": "^5.6.0",
         "ts-jest": "^23.6.0",
         "tslint": "^5.8.0",
-        "typescript": "3.3.3333",
         "vscode": "^1.1.28"
     },
     "dependencies": {
@@ -212,6 +211,7 @@
         "remark-squeeze-paragraphs": "^3.0.3",
         "resolve-from": "^4.0.0",
         "sucrase": "^3.10.1",
+        "typescript": "3.3.3333",
         "unified": "^7.1.0"
     },
     "extensionPack": [
