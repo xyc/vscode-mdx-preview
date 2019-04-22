@@ -7,38 +7,6 @@ import ReactDOM from 'react-dom';
 const MDXTagModule = require('@mdx-js/tag'); // no type defs
 import vscodeMarkdownLayout from './components/VscodeMarkdownLayout';
 
-/**
- * Splitting URL
- * Adapted from https://github.com/frontarm/polestar/blob/9ad18be2eb1722fc84b90d519232664a44d586df/src/DefaultResolver.ts#L6
- */
-// \/?   -- needed for vfs root /
-const URLPattern = /^(?:(npm|vfs):\/\/)?((?:@[\w\.\-]+\/)?\/?\w[\w\.\-]+)(@[^\/]+)?(\/.*)?$/;
-
-function splitURL(url: string) {
-  let loaders = extractLoaders(url);
-  let requestWithoutLoaders = removeLoaders(url);
-  let match = requestWithoutLoaders.match(URLPattern);
-  if (match) {
-    let [_, protocol, name, version, pathname] = match;
-    return {
-      protocol,
-      loaders,
-      name,
-      version,
-      pathname,
-    };
-  }
-}
-
-function extractLoaders(url: string) {
-  let match = url.match(/^(.*!)*/);
-  return match ? match[0] : '';
-}
-
-function removeLoaders(url: string) {
-  return url.replace(/^(.*!)*/, '');
-}
-
 const preloadedModules: { [key: string]: string } = {
   "npm://react@latest": "npm://react@16.8.6",
   "npm://react-dom@latest": "npm://react-dom@16.8.6",
@@ -87,50 +55,12 @@ const rpcFetcher = async (url: string, meta: FetchMeta) => {
 
   // console.log('fetched:', fsPath, code, dependencies, `isCSS: ${css}`);
   return {
-    id: fsPath, // `vfs://${fsPath}`,
+    id: fsPath,
     url,
     code,
     dependencies,
     css,
   };
-  
-  /*
-  const splitResult = splitURL(url);
-  if (splitResult) {
-    let { protocol, name = '', version, pathname = '' } = splitResult;
-    let isBare;
-    if (protocol === 'vfs') {
-      pathname = name + pathname;
-      isBare = false;
-    } else if (protocol = 'npm') {
-      pathname = name + pathname;
-      isBare = true;
-    }
-    const fetchResult = await ExtensionHandle.fetch(pathname, isBare);
-    if (!fetchResult) {
-      // TODO: yarn add if we didn't install the npm dependency
-      throw new Error(`Fetching ${pathname} failed.`);
-    }
-    const {
-      fsPath,
-      code,
-      dependencies,
-      css
-    } = fetchResult;
-
-    // console.log('fetched:', fsPath, code, dependencies, `isCSS: ${css}`);
-
-    return {
-      id: `vfs://${fsPath}`,
-      url,
-      code,
-      dependencies,
-      css
-    };
-  } else {
-    throw new Error(`Invalid url: ${url}, ${JSON.stringify(meta, null, 2)}`);
-  }
-  */
 };
 
 /**
@@ -184,7 +114,6 @@ export async function evaluate(code: string, entryFilePath: string, entryFileDep
       code,
       undefined,
       entryFilePath
-      // `vfs://${entryFilePath}`
     );
     const evaluationEndTime = performance.now();
     ExtensionHandle.reportPerformance(evaluationEndTime - evaluationStartTime);

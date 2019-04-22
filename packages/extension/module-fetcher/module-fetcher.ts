@@ -129,7 +129,6 @@ export async function fetchLocal(request, isBare, parentId, preview: Preview) {
       };
     }
     if (/\.(gif|png|jpe?g|svg)$/i.test(extname)) {
-      // const fsPath = path.resolve(path.dirname(parentId), pathname);
       const code = `module.exports = "vscode-resource://${fsPath}"`;
       return {
         fsPath,
