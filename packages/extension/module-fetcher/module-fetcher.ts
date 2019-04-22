@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import * as typescript from 'typescript';
 import { Preview } from '../preview/preview-manager';
 import { mdxTranspileAsync } from '../transpiler/mdx/mdx';
 import { transformAsync as babelTransformAsync } from '../transpiler/babel';
@@ -76,7 +77,26 @@ export async function fetchLocal(request, isBare, parentId, preview: Preview) {
 
       fsPath = resolveFrom(entryFsDirectory, request);
     } else {
-      fsPath = resolveFrom(path.dirname(parentId), request);
+      if (preview.typescriptConfiguration && !parentId.split(path.sep).includes('node_modules')) {
+        const { tsCompilerOptions, tsCompilerHost } = preview.typescriptConfiguration;
+        const resolvedModule = typescript.resolveModuleName(
+          request,
+          parentId,
+          tsCompilerOptions,
+          tsCompilerHost
+        ).resolvedModule;
+        if (!resolvedModule) {
+          fsPath = resolveFrom(path.dirname(parentId), request);
+        } else {
+          fsPath = resolvedModule.resolvedFileName;
+          // don't resolve .d.ts file with tsCompilerHost
+          if (fsPath.endsWith('.d.ts')) {
+            fsPath = resolveFrom(path.dirname(parentId), request);
+          }
+        }
+      } else {
+        fsPath = resolveFrom(path.dirname(parentId), request);
+      }
     }
 
     if(!checkFsPath(entryFsDirectory, fsPath)) {
@@ -119,8 +139,33 @@ export async function fetchLocal(request, isBare, parentId, preview: Preview) {
     if (/\.mdx?$/i.test(extname)) {
       code = await mdxTranspileAsync(code, false, preview);
     }
+    // if (/\.tsx?$/i.test(extname)) {
+    //   if (preview.typescriptConfiguration) {
+    //     const { tsCompilerOptions } = preview.typescriptConfiguration;
+    //     code = typescript.transpileModule(code, {
+    //       compilerOptions: tsCompilerOptions,
+    //       fileName: fsPath,
+    //     }).outputText;
+    //   }
+    // }
 
-    // NOTE precinct works before babel transpiling
+    if (!fsPath.split(path.sep).includes('node_modules')) {
+      console.log(`Transpiling: ${fsPath}`);
+      code = (await babelTransformAsync(code)).code;
+    } else {
+      // Only transpile npm packages if it's es module
+      // isEsModule function is from
+      // https://github.com/CompuIves/codesandbox-client/blob/13c9eda9bfaa38dec6a1699e31233bee388857bc/packages/app/src/sandbox/eval/utils/is-es-module.js
+      // Copyright (C) 2018  Ives van Hoorne
+      const isESModule = /(;|^)(import|export)(\s|{)/gm.test(code);
+      if (isESModule) {
+        console.log(`Transpiling: ${fsPath}`);
+        code = (await babelTransformAsync(code)).code;
+      } else {
+        code = code;
+      }
+    }
+
     const dependencyNames = precinct(code);
     // Figure out dependencies from code
     // Don't care about dependency version ranges here, assuming user has already done
@@ -141,33 +186,7 @@ export async function fetchLocal(request, isBare, parentId, preview: Preview) {
       }
 
       return dependencyName;
-
-      /*
-      const suffix = (dependencyName === '.' || dependencyName.endsWith(SEP)) ? SEP : '';
-      const dependencyUrl = `vfs://${path.resolve(
-        path.dirname(fsPath),
-        dependencyName
-      )}${suffix}`;
-      return dependencyUrl;
-      */
     });
-
-    if (!fsPath.split(path.sep).includes('node_modules')) {
-      console.log(`Transpiling: ${fsPath}`);
-      code = (await babelTransformAsync(code)).code;
-    } else {
-      // Only transpile npm packages if it's es module
-      // isEsModule function is from
-      // https://github.com/CompuIves/codesandbox-client/blob/13c9eda9bfaa38dec6a1699e31233bee388857bc/packages/app/src/sandbox/eval/utils/is-es-module.js
-      // Copyright (C) 2018  Ives van Hoorne
-      const isESModule = /(;|^)(import|export)(\s|{)/gm.test(code);
-      if (isESModule) {
-        console.log(`Transpiling: ${fsPath}`);
-        code = (await babelTransformAsync(code)).code;
-      } else {
-        code = code;
-      }
-    }
 
     return {
       fsPath,

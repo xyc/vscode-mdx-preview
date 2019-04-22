@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as typescript from 'typescript';
 
 import { SecurityPolicy } from '../security/security';
 
@@ -15,6 +16,11 @@ const { performance, PerformanceObserver } = require('perf_hooks');
 export interface StyleConfiguration {
   useVscodeMarkdownStyles: boolean;
   useWhiteBackground: boolean;
+}
+
+export interface TypeScriptConfiguration {
+  tsCompilerOptions: typescript.CompilerOptions;
+  tsCompilerHost: typescript.CompilerHost;
 }
 
 export let currentPreview: Preview | undefined;
@@ -53,6 +59,8 @@ export class Preview {
     securityPolicy: SecurityPolicy
   };
 
+  typescriptConfiguration?: TypeScriptConfiguration;
+
   performanceObserver: PerformanceObserver;
   evaluationDuration: DOMHighResTimeStamp;
   previewDuration: DOMHighResTimeStamp;
@@ -68,8 +76,33 @@ export class Preview {
     return { securityPolicy: this.configuration.securityPolicy };
   }
 
+  generateTypescriptConfiguration(configFile) {
+    let tsCompilerOptions: typescript.CompilerOptions,
+      tsCompilerHost: typescript.CompilerHost;
+    if (configFile) {
+      const configContents = fs.readFileSync(configFile).toString();
+      const configJson = typescript.parseConfigFileTextToJson(
+        configFile,
+        configContents
+      ).config.compilerOptions;
+      tsCompilerOptions = typescript.convertCompilerOptionsFromJson(
+        configJson,
+        configFile
+      ).options;
+    } else {
+      tsCompilerOptions = typescript.getDefaultCompilerOptions();
+    }
+    delete tsCompilerOptions.emitDeclarationOnly;
+    delete tsCompilerOptions.declaration;
+    tsCompilerHost = typescript.createCompilerHost(tsCompilerOptions);
+    this.typescriptConfiguration = {
+      tsCompilerHost,
+      tsCompilerOptions
+    };
+  }
+
   constructor(doc: vscode.TextDocument) {
-    this.doc = doc;
+    this.setDoc(doc);
     const extensionConfig = vscode.workspace.getConfiguration('mdx-preview', doc.uri);
     this.configuration = {
       previewOnChange: extensionConfig.get<boolean>('preview.previewOnChange', true),
@@ -93,6 +126,13 @@ export class Preview {
 
   setDoc(doc: vscode.TextDocument) {
     this.doc = doc;
+
+    let configFile = typescript.findConfigFile(this.entryFsDirectory, typescript.sys.fileExists);
+    if (configFile) {
+      this.generateTypescriptConfiguration(configFile);
+    } else {
+      this.typescriptConfiguration = undefined;
+    }
   }
 
   get fsPath():string {

@@ -26,8 +26,8 @@ export default async function evaluateInWebview(preview: Preview, text: string, 
     }
 
     const entryFilePath = fs.realpathSync(fsPath);
-    const entryFileDependencies = precinct(code);
     code = (await babelTransformAsync(code)).code;
+    const entryFileDependencies = precinct(code);
 
     console.log(code);
     console.log(entryFilePath);
