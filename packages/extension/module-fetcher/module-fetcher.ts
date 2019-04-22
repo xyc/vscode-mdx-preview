@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as typescript from 'typescript';
+import isModule from 'is-module';
 import { Preview } from '../preview/preview-manager';
 import { mdxTranspileAsync } from '../transpiler/mdx/mdx';
 import { transformAsync as babelTransformAsync } from '../transpiler/babel';
@@ -149,27 +150,21 @@ export async function fetchLocal(request, isBare, parentId, preview: Preview) {
     //   }
     // }
 
-    if (!fsPath.split(path.sep).includes('node_modules')) {
+    // Transform:
+    // - exclude node_modules
+    // - include file in node_modules only if it's es module
+    if (
+      !fsPath.split(path.sep).includes('node_modules') ||
+      isModule(code)
+    ) {
       console.log(`Transpiling: ${fsPath}`);
       code = (await babelTransformAsync(code)).code;
-    } else {
-      // Only transpile npm packages if it's es module
-      // isEsModule function is from
-      // https://github.com/CompuIves/codesandbox-client/blob/13c9eda9bfaa38dec6a1699e31233bee388857bc/packages/app/src/sandbox/eval/utils/is-es-module.js
-      // Copyright (C) 2018  Ives van Hoorne
-      const isESModule = /(;|^)(import|export)(\s|{)/gm.test(code);
-      if (isESModule) {
-        console.log(`Transpiling: ${fsPath}`);
-        code = (await babelTransformAsync(code)).code;
-      } else {
-        code = code;
-      }
     }
 
-    const dependencyNames = precinct(code);
     // Figure out dependencies from code
     // Don't care about dependency version ranges here, assuming user has already done
     // yarn install or npm install.
+    const dependencyNames = precinct(code);
     const dependencies = dependencyNames.map(dependencyName => {
       // precinct returns undefined for dynamic import expression, TODO: refactor this
       if (!dependencyName) {

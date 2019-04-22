@@ -205,6 +205,7 @@
         "@mdx-js/mdx": "^0.20.3",
         "babel-plugin-transform-dynamic-import": "^2.1.0",
         "gray-matter": "^4.0.2",
+        "is-module": "^1.0.0",
         "path-is-inside": "^1.0.2",
         "precinct": "^6.1.1",
         "remark-parse": "^6.0.3",
