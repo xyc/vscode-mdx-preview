@@ -12,14 +12,14 @@ export function initWorkspaceHandlers(context: ExtensionContext) {
     workspace.onDidOpenTextDocument(event => { });
     
     workspace.onDidSaveTextDocument(event => {
-        if (currentPreview && currentPreview.fsPath === event.uri.fsPath) {
-            currentPreview.handleDidSaveTextDocument();
+        if (currentPreview) {
+            currentPreview.handleDidSaveTextDocument(event.uri.fsPath);
         }
     }, null, disposables);
 
     workspace.onDidChangeTextDocument(event => {
-        if (currentPreview && currentPreview.fsPath === event.document.uri.fsPath) {
-            currentPreview.handleDidChangeTextDocument();
+        if (currentPreview) {
+            currentPreview.handleDidChangeTextDocument(event.document.uri.fsPath);
         }
     }, null, disposables);
 

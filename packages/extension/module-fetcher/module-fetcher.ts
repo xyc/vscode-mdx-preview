@@ -108,6 +108,8 @@ export async function fetchLocal(request, isBare, parentId, preview: Preview) {
       throw new PathAccessDeniedError(fsPath);
     }
 
+    preview.dependentFsPaths.add(fsPath);
+
     let code = fs.readFileSync(fsPath).toString();
     const extname = path.extname(fsPath);
     if (/\.json$/i.test(extname)) {

@@ -1,4 +1,4 @@
-import { evaluate } from './evaluate';
+import { evaluate, invalidate } from './evaluate';
 import {
   currentBuildError,
   startReportingRuntimeErrorsIfNotStarted,
@@ -20,6 +20,10 @@ class RPCWebviewHandle {
   showPreviewError(error: Error) {
     startReportingRuntimeErrorsIfNotStarted();
     handleBuildError(error);
+  }
+
+  async invalidate(fsPath: string) {
+    await invalidate(fsPath);
   }
 }
 
