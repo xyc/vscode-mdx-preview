@@ -138,6 +138,5 @@ export async function evaluate(code: string, entryFilePath: string, entryFileDep
 }
 
 export async function invalidate(fsPath: string) {
-  console.log(polestar);
   await polestar.unload(fsPath);
 }
