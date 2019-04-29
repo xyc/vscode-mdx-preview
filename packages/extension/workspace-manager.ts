@@ -19,7 +19,7 @@ export function initWorkspaceHandlers(context: ExtensionContext) {
 
     workspace.onDidChangeTextDocument(event => {
         if (currentPreview) {
-            currentPreview.handleDidChangeTextDocument(event.document.uri.fsPath);
+            currentPreview.handleDidChangeTextDocument(event.document.uri.fsPath, event.document);
         }
     }, null, disposables);
 

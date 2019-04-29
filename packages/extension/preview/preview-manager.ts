@@ -30,6 +30,11 @@ export class Preview {
    */
   doc: vscode.TextDocument;
 
+  /**
+   * Dependent doc being editted
+   */
+  editingDoc: vscode.TextDocument;
+
   dependentFsPaths: Set<string>;
 
   /**
@@ -194,8 +199,10 @@ export class Preview {
     this.updateWebview();
   }
 
-  handleDidChangeTextDocument(fsPath: string) {
+  handleDidChangeTextDocument(fsPath: string, doc: vscode.TextDocument) {
     if (this.configuration.previewOnChange) {
+      this.editingDoc = doc;
+
       if (this.dependentFsPaths.has(fsPath)) {
         if (fsPath !== this.fsPath) {
           this.webviewHandle.invalidate(fsPath)

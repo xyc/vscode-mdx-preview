@@ -1,9 +1,7 @@
 import { evaluate, invalidate } from './evaluate';
 import {
-  currentBuildError,
   startReportingRuntimeErrorsIfNotStarted,
   handleBuildError,
-  dismissBuildError
 } from './lib/errors';
 
 class RPCWebviewHandle {
@@ -11,9 +9,6 @@ class RPCWebviewHandle {
 
   updatePreview(code: string, entryFilePath: string, entryFileDependencies: Array<string>) {
     startReportingRuntimeErrorsIfNotStarted();
-    if (currentBuildError) {
-      dismissBuildError();
-    }
     evaluate(code, entryFilePath, entryFileDependencies);
   }
 

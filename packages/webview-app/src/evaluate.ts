@@ -1,5 +1,11 @@
 import ValueEventEmitter from './lib/ValueEventEmitter';
-import { hasRuntimeError, dismissRuntimeErrors, handleRuntimeError } from './lib/errors';
+import {
+  currentBuildError,
+  dismissBuildError,
+  hasRuntimeError,
+  dismissRuntimeErrors,
+  handleRuntimeError,
+} from './lib/errors';
 import { ExtensionHandle } from './rpc-webview';
 import { createPolestar, splitNPMURL, FetchMeta } from '@dxflow/polestar';
 import React from 'react';
@@ -102,11 +108,17 @@ export async function evaluate(code: string, entryFilePath: string, entryFileDep
   evaluationProgress.value = EvaluationProgress.IN_PROGRESS;
   const evaluationStartTime = performance.now();
 
+  if (currentBuildError) {
+    dismissBuildError();
+    await polestar.clearError();
+    dismissRuntimeErrors();
+  }
+
   await preloadPromise;
 
   try {
     if (hasRuntimeError) {
-      polestar.clearError();
+      await polestar.clearError();
       dismissRuntimeErrors();
     }
     let evaluatedModule = await polestar.evaluate(

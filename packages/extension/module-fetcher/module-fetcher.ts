@@ -110,7 +110,15 @@ export async function fetchLocal(request, isBare, parentId, preview: Preview) {
 
     preview.dependentFsPaths.add(fsPath);
 
-    let code = fs.readFileSync(fsPath).toString();
+    let code: string;
+    if (preview.configuration.previewOnChange
+      && preview.editingDoc
+      && preview.editingDoc.uri.fsPath === fsPath) {
+      code = preview.editingDoc.getText();
+    } else {
+      code = fs.readFileSync(fsPath).toString();
+    }
+
     const extname = path.extname(fsPath);
     if (/\.json$/i.test(extname)) {
       return {
