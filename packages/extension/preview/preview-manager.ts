@@ -29,6 +29,14 @@ export class Preview {
    * Current text document being previewed
    */
   doc: vscode.TextDocument;
+
+  /**
+   * Dependent doc being editted
+   */
+  editingDoc: vscode.TextDocument;
+
+  dependentFsPaths: Set<string>;
+
   /**
    * TODO: types
    * Curent Webview handle pertaining to this preview
@@ -127,6 +135,7 @@ export class Preview {
   setDoc(doc: vscode.TextDocument) {
     this.doc = doc;
 
+    this.dependentFsPaths = new Set([doc.uri.fsPath]);
     let configFile = typescript.findConfigFile(this.entryFsDirectory, typescript.sys.fileExists);
     if (configFile) {
       this.generateTypescriptConfiguration(configFile);
@@ -190,14 +199,34 @@ export class Preview {
     this.updateWebview();
   }
 
-  handleDidChangeTextDocument() {
+  handleDidChangeTextDocument(fsPath: string, doc: vscode.TextDocument) {
     if (this.configuration.previewOnChange) {
-      this.updateWebview();
+      this.editingDoc = doc;
+
+      if (this.dependentFsPaths.has(fsPath)) {
+        if (fsPath !== this.fsPath) {
+          this.webviewHandle.invalidate(fsPath)
+            .then(() => {
+              this.updateWebview();
+            });
+        } else {
+          this.updateWebview();
+        }
+      }
     }
   }
 
-  handleDidSaveTextDocument() {
-    this.updateWebview();
+  handleDidSaveTextDocument(fsPath: string) {
+    if (this.dependentFsPaths.has(fsPath)) {
+      if (fsPath !== this.fsPath) {
+        this.webviewHandle.invalidate(fsPath)
+          .then(() => {
+            this.updateWebview();
+          });
+      } else {
+        this.updateWebview();
+      }
+    }
   }
   
   updateConfiguration() {

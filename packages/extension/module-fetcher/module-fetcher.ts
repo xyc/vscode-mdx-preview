@@ -16,6 +16,7 @@ const NOOP_MODULE = `Object.defineProperty(exports, '__esModule', { value: true 
   exports.default = noop;`;
 
 // https://github.com/calvinmetcalf/rollup-plugin-node-builtins
+// License: MIT except ES6 ports of browserify modules which are whatever the original library was.
 const NODE_CORE_MODULES = new Set([
   // unshimmable
   'dns',
@@ -66,38 +67,34 @@ export async function fetchLocal(request, isBare, parentId, preview: Preview) {
       return NOOP_MODULE;
     }
 
-    let fsPath;
-    if (isBare) {
-      if (NODE_CORE_MODULES.has(request)) {
-        return {
-          fsPath: `/externalModules/${request}`,
-          code: NOOP_MODULE,
-          dependencies: [],
-        };
-      }
+    if (isBare && NODE_CORE_MODULES.has(request)) {
+      return {
+        fsPath: `/externalModules/${request}`,
+        code: NOOP_MODULE,
+        dependencies: [],
+      };
+    }
 
-      fsPath = resolveFrom(entryFsDirectory, request);
-    } else {
-      if (preview.typescriptConfiguration && !parentId.split(path.sep).includes('node_modules')) {
-        const { tsCompilerOptions, tsCompilerHost } = preview.typescriptConfiguration;
-        const resolvedModule = typescript.resolveModuleName(
-          request,
-          parentId,
-          tsCompilerOptions,
-          tsCompilerHost
-        ).resolvedModule;
-        if (!resolvedModule) {
-          fsPath = resolveFrom(path.dirname(parentId), request);
-        } else {
-          fsPath = resolvedModule.resolvedFileName;
-          // don't resolve .d.ts file with tsCompilerHost
-          if (fsPath.endsWith('.d.ts')) {
-            fsPath = resolveFrom(path.dirname(parentId), request);
-          }
+    let fsPath;
+    if (preview.typescriptConfiguration && !parentId.split(path.sep).includes('node_modules')) {
+      const { tsCompilerOptions, tsCompilerHost } = preview.typescriptConfiguration;
+      const resolvedModule = typescript.resolveModuleName(
+        request,
+        parentId,
+        tsCompilerOptions,
+        tsCompilerHost
+      ).resolvedModule;
+      if (resolvedModule) {
+        fsPath = resolvedModule.resolvedFileName;
+        // don't resolve .d.ts file with tsCompilerHost
+        if (fsPath.endsWith('.d.ts')) {
+          fsPath = null;
         }
-      } else {
-        fsPath = resolveFrom(path.dirname(parentId), request);
       }
+    }
+    if (!fsPath) {
+      const basedir = path.dirname(parentId);
+      fsPath = resolveFrom(basedir, request);
     }
 
     if(!checkFsPath(entryFsDirectory, fsPath)) {
@@ -111,7 +108,17 @@ export async function fetchLocal(request, isBare, parentId, preview: Preview) {
       throw new PathAccessDeniedError(fsPath);
     }
 
-    let code = fs.readFileSync(fsPath).toString();
+    preview.dependentFsPaths.add(fsPath);
+
+    let code: string;
+    if (preview.configuration.previewOnChange
+      && preview.editingDoc
+      && preview.editingDoc.uri.fsPath === fsPath) {
+      code = preview.editingDoc.getText();
+    } else {
+      code = fs.readFileSync(fsPath).toString();
+    }
+
     const extname = path.extname(fsPath);
     if (/\.json$/i.test(extname)) {
       return {
