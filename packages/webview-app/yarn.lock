@@ -861,10 +861,10 @@
   resolved "https://registry.yarnpkg.com/@csstools/convert-colors/-/convert-colors-1.4.0.tgz#ad495dc41b12e75d588c6db8b9834f08fa131eb7"
   integrity sha512-5a6wqoJV/xEdbRNKVo6I4hO3VjyDq//8q2f9I6PBAvMesJHFauXDorcNCsr9RzvsZnaWi5NYCcfyqP1QeFHFbw==
 
-"@dxflow/polestar@^0.1.8":
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/@dxflow/polestar/-/polestar-0.1.8.tgz#a08f48d48e3e4ff098f9c473dfacc76d039c4d7b"
-  integrity sha512-LCwPsOhwA1JHgIXRWl2BsA8VW1BtvdXNfrzR+aWlvGBkWrbNMkaRfgqmdL8UK5BYbHQJHmmRNtWXxn+tCZcAhg==
+"@dxflow/polestar@^0.1.9":
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/@dxflow/polestar/-/polestar-0.1.9.tgz#4f8858b657c9f6b81441d67b605d5062f240e9f9"
+  integrity sha512-k2RVpp22mtHNttzg6WPAioKOPivqw0IiXso37tdb6uoQF5k+BGOLz2oWa4hUCY/3jCNwsbKuqwRkIIQVtPvWIA==
   dependencies:
     "@types/semver" "^5.5.0"
     semver "^5.6.0"
