@@ -138,7 +138,10 @@ export function createOrShowPanel(preview: Preview) {
 
         vscode.commands.executeCommand('setContext', MDX_PREVIEW_FOCUS_CONTEXT_KEY, true);
 
-        panel.onDidDispose(() => dispose(), null, disposables);        
+        panel.onDidDispose(() => {
+            preview.active = false;
+            dispose();
+        }, null, disposables);
         panel.onDidChangeViewState(({ webviewPanel }) => {
             vscode.commands.executeCommand('setContext', MDX_PREVIEW_FOCUS_CONTEXT_KEY, webviewPanel.active);
         }, null, disposables);
@@ -156,6 +159,7 @@ export function createOrShowPanel(preview: Preview) {
 
         vscode.commands.executeCommand('setContext', MDX_PREVIEW_FOCUS_CONTEXT_KEY, true);
     }
+    preview.active = true;
     return panel;
 }
 

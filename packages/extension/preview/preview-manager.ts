@@ -30,11 +30,18 @@ export class Preview {
    */
   doc: vscode.TextDocument;
 
+  active: boolean;
+
   /**
-   * Dependent doc being editted
+   * Dependent doc being edited.
+   * This is used to get doc text instead of reading from the file system,
+   * when preview on change is configured.
    */
   editingDoc: vscode.TextDocument;
 
+  /**
+   * Dependent file paths
+   */
   dependentFsPaths: Set<string>;
 
   /**
@@ -200,9 +207,26 @@ export class Preview {
   }
 
   handleDidChangeTextDocument(fsPath: string, doc: vscode.TextDocument) {
-    if (this.configuration.previewOnChange) {
-      this.editingDoc = doc;
+    if (this.active) {
+      if (this.configuration.previewOnChange) {
+        if (this.dependentFsPaths.has(fsPath)) {
+          this.editingDoc = doc;
+          if (fsPath !== this.fsPath) {
+            this.webviewHandle.invalidate(fsPath)
+              .then(() => {
+                this.updateWebview();
+              });
+          } else {
+            // not necessary to invalidate entry path
+            this.updateWebview();
+          }
+        }
+      }
+    }
+  }
 
+  handleDidSaveTextDocument(fsPath: string) {
+    if (this.active) {
       if (this.dependentFsPaths.has(fsPath)) {
         if (fsPath !== this.fsPath) {
           this.webviewHandle.invalidate(fsPath)
@@ -212,19 +236,6 @@ export class Preview {
         } else {
           this.updateWebview();
         }
-      }
-    }
-  }
-
-  handleDidSaveTextDocument(fsPath: string) {
-    if (this.dependentFsPaths.has(fsPath)) {
-      if (fsPath !== this.fsPath) {
-        this.webviewHandle.invalidate(fsPath)
-          .then(() => {
-            this.updateWebview();
-          });
-      } else {
-        this.updateWebview();
       }
     }
   }
