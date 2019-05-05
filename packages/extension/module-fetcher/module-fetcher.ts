@@ -1,10 +1,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as typescript from 'typescript';
-import isModule from 'is-module';
 import { Preview } from '../preview/preview-manager';
-import { mdxTranspileAsync } from '../transpiler/mdx/mdx';
-import { transformAsync as babelTransformAsync } from '../transpiler/babel';
+import { transform } from './transform';
 import { checkFsPath, PathAccessDeniedError } from '../security/checkFsPath';
 
 const resolveFrom = require('resolve-from');
@@ -143,30 +141,9 @@ export async function fetchLocal(request, isBare, parentId, preview: Preview) {
         dependencies: [],
       };
     }
-    if (/\.mdx?$/i.test(extname)) {
-      code = await mdxTranspileAsync(code, false, preview);
-    }
-    // if (/\.tsx?$/i.test(extname)) {
-    //   if (preview.typescriptConfiguration) {
-    //     const { tsCompilerOptions } = preview.typescriptConfiguration;
-    //     code = typescript.transpileModule(code, {
-    //       compilerOptions: tsCompilerOptions,
-    //       fileName: fsPath,
-    //     }).outputText;
-    //   }
-    // }
 
-    // Transform:
-    // - exclude node_modules
-    // - include file in node_modules only if it's es module
-    if (
-      !fsPath.split(path.sep).includes('node_modules') ||
-      isModule(code)
-    ) {
-      console.log(`Transpiling: ${fsPath}`);
-      code = (await babelTransformAsync(code)).code;
-    }
-
+    code = await transform(code, fsPath, preview);
+    
     // Figure out dependencies from code
     // Don't care about dependency version ranges here, assuming user has already done
     // yarn install or npm install.

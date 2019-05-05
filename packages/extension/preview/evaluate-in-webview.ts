@@ -1,7 +1,6 @@
 import * as fs from 'fs';
 
-import { mdxTranspileAsync } from '../transpiler/mdx/mdx';
-import { transformAsync as babelTransformAsync } from '../transpiler/babel';
+import { transformEntry } from '../module-fetcher/transform';
 
 const precinct = require("precinct");
 
@@ -17,16 +16,8 @@ export default async function evaluateInWebview(preview: Preview, text: string, 
   try {
     performance.mark('preview/start');
 
-    const { languageId, uri } = preview.doc;
-    let code: string;
-    if (languageId === 'markdown' || languageId === 'mdx' || uri.scheme === 'untitled') {
-      code = await mdxTranspileAsync(text, true, preview);
-    } else {
-      code = text;
-    }
-
+    const code = await transformEntry(text, preview);
     const entryFilePath = fs.realpathSync(fsPath);
-    code = (await babelTransformAsync(code)).code;
     const entryFileDependencies = precinct(code);
 
     console.log(code);
