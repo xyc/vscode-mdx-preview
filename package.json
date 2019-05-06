@@ -2,7 +2,7 @@
     "name": "vscode-mdx-preview",
     "displayName": "MDX Preview",
     "description": "MDX Preview",
-    "version": "0.1.5",
+    "version": "0.2.0",
     "publisher": "xyc",
     "repository": "https://github.com/xyc/vscode-mdx-preview",
     "engines": {
@@ -95,6 +95,11 @@
                     "group": "navigation"
                 },
                 {
+                    "command": "mdx-preview.commands.openPreview",
+                    "when": "editorLangId == typescriptreact",
+                    "group": "navigation"
+                },
+                {
                     "command": "mdx-preview.commands.refreshPreview",
                     "when": "mdxPreviewFocus",
                     "group": "navigation"
@@ -114,6 +119,11 @@
                 {
                     "command": "mdx-preview.commands.openPreview",
                     "when": "editorLangId == javascript",
+                    "group": "navigation"
+                },
+                {
+                    "command": "mdx-preview.commands.openPreview",
+                    "when": "editorLangId == typescriptreact",
                     "group": "navigation"
                 }
             ]

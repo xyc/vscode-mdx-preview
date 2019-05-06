@@ -42,8 +42,8 @@ import AnotherMDX from './AnotherMDX.mdx'
 <AnotherMDX></AnotherMDX>
 ```
 
-### JavaScript Preview (Experimental)
-If you have a JavaScript file that renders to the `#root` element, you can also preview that using MDX Preview. For example, you can preview the `index.js` file from your react app:
+### JavaScript/TypeScript Preview
+If you have a JavaScript or TypeScript file that renders to the `#root` element, you can also preview that using MDX Preview. For example, you can preview the `index.js` file from your react app:
 
 ```js
 // index.js
@@ -55,7 +55,7 @@ ReactDOM.render(
 );
 ```
 
-VS Code webview limitations
+#### Note that VS Code webview has some limitations:
 - Service worker / Local storage are not available. 
 - Use `MemoryRouter` if you are using React Router.
 
@@ -73,8 +73,13 @@ This extension contributes the following settings:
 * `mdx-preview.preview.mdx.customLayoutFilePath`: Path of custom layout file to use
 * `mdx-preview.build.useSucraseTranspiler`: Use [sucrase](https://sucrase.io) as transpiler (A faster alternative to babel) instead of Babel/TypeScript transpiler
 
-## How it works
+## FAQ
+
+#### How it works
 MDX Preview transpiles your `.mdx` file using `@mdx-js/mdx`, sends the initial file to the webview, and recursively fetches local dependencies (from your workspace) and npm dependencies (from `node_modules` directory) from your workspace using [polestar](https://github.com/frontarm/polestar). MDX Preview has provided built-in dependencies for MDX rendering like `react`, `react-dom` and `@mdx-js/tag`.
+
+#### Some components doesn't work?
+Generally runtime errors will surface in react-error-overlay. If it doesn't, you can open "Developer: Open Webview Developer Tools" (from command palette) to inspect the error. Note that VS Code webview has some limitations.
 
 ## Road map
 - [x] TypeScript support
