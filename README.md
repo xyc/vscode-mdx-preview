@@ -66,19 +66,19 @@ You can change your security settings through `mdx-preview.preview.security` ext
 ## Extension Settings
 This extension contributes the following settings:
 
-<!-- TODO -->
 * `mdx-preview.preview.previewOnChange`: If set to true, previews on file change; If set to false, previews on file save
 * `mdx-preview.preview.security`: Security policy settings
 * `mdx-preview.preview.useVscodeMarkdownStyles`: Use VS Code Markdown Styles for layout.
 * `mdx-preview.preview.useWhiteBackground`: Use white background regardless of current theme settings.
 * `mdx-preview.preview.mdx.customLayoutFilePath`: Path of custom layout file to use
+* `mdx-preview.build.useSucraseTranspiler`: Use [sucrase](https://sucrase.io) as transpiler (A faster alternative to babel) instead of Babel/TypeScript transpiler
 
 ## How it works
 MDX Preview transpiles your `.mdx` file using `@mdx-js/mdx`, sends the initial file to the webview, and recursively fetches local dependencies (from your workspace) and npm dependencies (from `node_modules` directory) from your workspace using [polestar](https://github.com/frontarm/polestar). MDX Preview has provided built-in dependencies for MDX rendering like `react`, `react-dom` and `@mdx-js/tag`.
 
 ## Road map
+- [x] TypeScript support
 - [ ] Scroll Sync
-- [ ] TypeScript support
 - [ ] remark/rehype plugins
 - [ ] Integrations with gatsby / x0 /...
 

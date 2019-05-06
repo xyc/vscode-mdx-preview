@@ -149,6 +149,12 @@
                     ],
                     "scope": "resource"
                 },
+                "mdx-preview.build.useSucraseTranspiler": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Use sucrase as transpiler",
+                    "scope": "resource"
+                },
                 "mdx-preview.preview.useVscodeMarkdownStyles": {
                     "type": "boolean",
                     "default": true,
