@@ -16,7 +16,7 @@ export default async function evaluateInWebview(preview: Preview, text: string, 
   try {
     performance.mark('preview/start');
 
-    const code = await transformEntry(text, preview);
+    const code = await transformEntry(text, fsPath, preview);
     const entryFilePath = fs.realpathSync(fsPath);
     const entryFileDependencies = precinct(code);
 
