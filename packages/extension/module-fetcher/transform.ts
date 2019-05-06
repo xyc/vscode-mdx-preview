@@ -12,7 +12,7 @@ async function transformEntry(code: string, fsPath: string, preview: Preview) {
     code = await mdxTranspileAsync(code, true, preview);
   }
 
-  let useSucrase = false;
+  let useSucrase = preview.configuration.useSucraseTranspiler;
   if ((languageId === 'typescript' || languageId === 'typescriptreact') && !useSucrase) {
     // in case user hasn't provided a tsconfig.json, generate a default one
     if (!preview.typescriptConfiguration) {
@@ -45,7 +45,7 @@ async function transform(code: string, fsPath, preview: Preview) {
     code = await mdxTranspileAsync(code, false, preview);
   }
 
-  let useSucrase = false;
+  let useSucrase = preview.configuration.useSucraseTranspiler;
   if (/\.tsx?$/i.test(extname) && !useSucrase) {
     if (!preview.typescriptConfiguration) {
       preview.generateTypescriptConfiguration(null);

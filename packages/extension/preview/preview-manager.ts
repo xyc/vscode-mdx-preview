@@ -71,6 +71,7 @@ export class Preview {
     useVscodeMarkdownStyles: boolean;
     useWhiteBackground: boolean;
     customLayoutFilePath: string;
+    useSucraseTranspiler: boolean;
     securityPolicy: SecurityPolicy
   };
 
@@ -125,6 +126,7 @@ export class Preview {
     const extensionConfig = vscode.workspace.getConfiguration('mdx-preview', doc.uri);
     this.configuration = {
       previewOnChange: extensionConfig.get<boolean>('preview.previewOnChange', true),
+      useSucraseTranspiler: extensionConfig.get<boolean>('preview.useSucraseTranspiler', false),
       useVscodeMarkdownStyles: extensionConfig.get<boolean>('preview.useVscodeMarkdownStyles', true),
       useWhiteBackground: extensionConfig.get<boolean>('preview.useWhiteBackground', false),
       customLayoutFilePath: extensionConfig.get<string>('preview.mdx.customLayoutFilePath', ""),
@@ -247,6 +249,7 @@ export class Preview {
   updateConfiguration() {
     const extensionConfig = vscode.workspace.getConfiguration('mdx-preview', this.doc.uri);
     const previewOnChange = extensionConfig.get<boolean>('preview.previewOnChange', true);
+    const useSucraseTranspiler = extensionConfig.get<boolean>('preview.useSucraseTranspiler', false);
     const useVscodeMarkdownStyles = extensionConfig.get<boolean>('preview.useVscodeMarkdownStyles', true);
     const useWhiteBackground = extensionConfig.get<boolean>('preview.useWhiteBackground', false);
     const customLayoutFilePath = extensionConfig.get<string>('preview.mdx.customLayoutFilePath', "");
@@ -259,6 +262,7 @@ export class Preview {
 
     Object.assign(this.configuration, {
       previewOnChange,
+      useSucraseTranspiler,
       useVscodeMarkdownStyles,
       useWhiteBackground,
       customLayoutFilePath,
