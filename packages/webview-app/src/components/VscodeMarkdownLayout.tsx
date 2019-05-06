@@ -48,6 +48,10 @@ const components = {
       font-size: inherit;
       line-height: auto;
     }
+    a {
+      font-size: inherit;
+      line-height: inherit;
+    }
   `,
   h2: styled.h2`
     ${bodyStyles}
@@ -57,6 +61,10 @@ const components = {
         monospace, 'Droid Sans Fallback';
       font-size: inherit;
       line-height: auto;
+    }
+    a {
+      font-size: inherit;
+      line-height: inherit;
     }
     line-height: 1.6;
   `,
@@ -69,6 +77,10 @@ const components = {
       font-size: inherit;
       line-height: auto;
     }
+    a {
+      font-size: inherit;
+      line-height: inherit;
+    }
     line-height: 1.6;
   `,
   h4: styled.h4`
@@ -78,6 +90,10 @@ const components = {
         monospace, 'Droid Sans Fallback';
       font-size: inherit;
       line-height: auto;
+    }
+    a {
+      font-size: inherit;
+      line-height: inherit;
     }
     line-height: 1.6;
   `,
@@ -89,6 +105,10 @@ const components = {
       font-size: inherit;
       line-height: auto;
     }
+    a {
+      font-size: inherit;
+      line-height: inherit;
+    }
     line-height: 1.6;
   `,
   h6: styled.h6`
@@ -98,6 +118,10 @@ const components = {
         monospace, 'Droid Sans Fallback';
       font-size: inherit;
       line-height: auto;
+    }
+    a {
+      font-size: inherit;
+      line-height: inherit;
     }
     line-height: 1.6;
   `,
@@ -263,11 +287,14 @@ const createLayout = ({ forceLightTheme }: { forceLightTheme?: boolean }) => {
     useEffect(() => {
       const originalColorBodyForeground = document.body.style.color;
       const originalColorBodyBackground = document.body.style.backgroundColor;
+      const originalFontSize = document.body.style.fontSize;
       document.body.style.color = webviewTheme.colorBodyForeground;
       document.body.style.backgroundColor = webviewTheme.colorBodyBackground;
+      document.body.style.fontSize = '14px';
       return () => {
         document.body.style.color = originalColorBodyForeground;
         document.body.style.backgroundColor = originalColorBodyBackground;
+        document.body.style.fontSize = originalFontSize;
       };
     });
 
