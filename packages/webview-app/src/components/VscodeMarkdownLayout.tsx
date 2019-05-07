@@ -287,14 +287,11 @@ const createLayout = ({ forceLightTheme }: { forceLightTheme?: boolean }) => {
     useEffect(() => {
       const originalColorBodyForeground = document.body.style.color;
       const originalColorBodyBackground = document.body.style.backgroundColor;
-      const originalFontSize = document.body.style.fontSize;
       document.body.style.color = webviewTheme.colorBodyForeground;
       document.body.style.backgroundColor = webviewTheme.colorBodyBackground;
-      document.body.style.fontSize = '14px';
       return () => {
         document.body.style.color = originalColorBodyForeground;
         document.body.style.backgroundColor = originalColorBodyBackground;
-        document.body.style.fontSize = originalFontSize;
       };
     });
 
