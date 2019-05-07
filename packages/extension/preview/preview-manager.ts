@@ -111,7 +111,7 @@ export class Preview {
     delete tsCompilerOptions.emitDeclarationOnly;
     delete tsCompilerOptions.declaration;
     tsCompilerOptions.module = typescript.ModuleKind.ESNext;
-    tsCompilerOptions.target = typescript.ScriptTarget.ES5;
+    tsCompilerOptions.target = typescript.ScriptTarget.ESNext;
     tsCompilerOptions.noEmitHelpers = false;
     tsCompilerOptions.importHelpers = false;
     tsCompilerHost = typescript.createCompilerHost(tsCompilerOptions);
