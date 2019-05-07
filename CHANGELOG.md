@@ -3,8 +3,10 @@ All notable changes to the "vscode-mdx-preview" extension will be documented in 
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
-## [Unreleased]
-- Support dynamic imports
+## [0.2.0]
+- Support TypeScript [#1](https://github.com/xyc/vscode-mdx-preview/issues/1)
+- Support dynamic imports [#3](https://github.com/xyc/vscode-mdx-preview/pull/3)
+- Hot update dependent files [#5](https://github.com/xyc/vscode-mdx-preview/issues/5)
 
 ## [0.1.5] - 04/13/2019
 - Add a preview refresh Button

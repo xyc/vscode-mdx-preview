@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as typescript from 'typescript';
 
 import { SecurityPolicy } from '../security/security';
 
@@ -17,12 +18,32 @@ export interface StyleConfiguration {
   useWhiteBackground: boolean;
 }
 
+export interface TypeScriptConfiguration {
+  tsCompilerOptions: typescript.CompilerOptions;
+  tsCompilerHost: typescript.CompilerHost;
+}
+
 export let currentPreview: Preview | undefined;
 export class Preview {
   /**
    * Current text document being previewed
    */
   doc: vscode.TextDocument;
+
+  active: boolean;
+
+  /**
+   * Dependent doc being edited.
+   * This is used to get doc text instead of reading from the file system,
+   * when preview on change is configured.
+   */
+  editingDoc: vscode.TextDocument;
+
+  /**
+   * Dependent file paths
+   */
+  dependentFsPaths: Set<string>;
+
   /**
    * TODO: types
    * Curent Webview handle pertaining to this preview
@@ -50,8 +71,11 @@ export class Preview {
     useVscodeMarkdownStyles: boolean;
     useWhiteBackground: boolean;
     customLayoutFilePath: string;
+    useSucraseTranspiler: boolean;
     securityPolicy: SecurityPolicy
   };
+
+  typescriptConfiguration?: TypeScriptConfiguration;
 
   performanceObserver: PerformanceObserver;
   evaluationDuration: DOMHighResTimeStamp;
@@ -68,11 +92,41 @@ export class Preview {
     return { securityPolicy: this.configuration.securityPolicy };
   }
 
+  generateTypescriptConfiguration(configFile) {
+    let tsCompilerOptions: typescript.CompilerOptions,
+      tsCompilerHost: typescript.CompilerHost;
+    if (configFile) {
+      const configContents = fs.readFileSync(configFile).toString();
+      const configJson = typescript.parseConfigFileTextToJson(
+        configFile,
+        configContents
+      ).config.compilerOptions;
+      tsCompilerOptions = typescript.convertCompilerOptionsFromJson(
+        configJson,
+        configFile
+      ).options;
+    } else {
+      tsCompilerOptions = typescript.getDefaultCompilerOptions();
+    }
+    delete tsCompilerOptions.emitDeclarationOnly;
+    delete tsCompilerOptions.declaration;
+    tsCompilerOptions.module = typescript.ModuleKind.ESNext;
+    tsCompilerOptions.target = typescript.ScriptTarget.ES5;
+    tsCompilerOptions.noEmitHelpers = false;
+    tsCompilerOptions.importHelpers = false;
+    tsCompilerHost = typescript.createCompilerHost(tsCompilerOptions);
+    this.typescriptConfiguration = {
+      tsCompilerHost,
+      tsCompilerOptions
+    };
+  }
+
   constructor(doc: vscode.TextDocument) {
-    this.doc = doc;
+    this.setDoc(doc);
     const extensionConfig = vscode.workspace.getConfiguration('mdx-preview', doc.uri);
     this.configuration = {
       previewOnChange: extensionConfig.get<boolean>('preview.previewOnChange', true),
+      useSucraseTranspiler: extensionConfig.get<boolean>('build.useSucraseTranspiler', false),
       useVscodeMarkdownStyles: extensionConfig.get<boolean>('preview.useVscodeMarkdownStyles', true),
       useWhiteBackground: extensionConfig.get<boolean>('preview.useWhiteBackground', false),
       customLayoutFilePath: extensionConfig.get<string>('preview.mdx.customLayoutFilePath', ""),
@@ -93,6 +147,14 @@ export class Preview {
 
   setDoc(doc: vscode.TextDocument) {
     this.doc = doc;
+
+    this.dependentFsPaths = new Set([doc.uri.fsPath]);
+    let configFile = typescript.findConfigFile(this.entryFsDirectory, typescript.sys.fileExists);
+    if (configFile) {
+      this.generateTypescriptConfiguration(configFile);
+    } else {
+      this.typescriptConfiguration = undefined;
+    }
   }
 
   get fsPath():string {
@@ -150,19 +212,44 @@ export class Preview {
     this.updateWebview();
   }
 
-  handleDidChangeTextDocument() {
-    if (this.configuration.previewOnChange) {
-      this.updateWebview();
+  handleDidChangeTextDocument(fsPath: string, doc: vscode.TextDocument) {
+    if (this.active) {
+      if (this.configuration.previewOnChange) {
+        if (this.dependentFsPaths.has(fsPath)) {
+          this.editingDoc = doc;
+          if (fsPath !== this.fsPath) {
+            this.webviewHandle.invalidate(fsPath)
+              .then(() => {
+                this.updateWebview();
+              });
+          } else {
+            // not necessary to invalidate entry path
+            this.updateWebview();
+          }
+        }
+      }
     }
   }
 
-  handleDidSaveTextDocument() {
-    this.updateWebview();
+  handleDidSaveTextDocument(fsPath: string) {
+    if (this.active) {
+      if (this.dependentFsPaths.has(fsPath)) {
+        if (fsPath !== this.fsPath) {
+          this.webviewHandle.invalidate(fsPath)
+            .then(() => {
+              this.updateWebview();
+            });
+        } else {
+          this.updateWebview();
+        }
+      }
+    }
   }
   
   updateConfiguration() {
     const extensionConfig = vscode.workspace.getConfiguration('mdx-preview', this.doc.uri);
     const previewOnChange = extensionConfig.get<boolean>('preview.previewOnChange', true);
+    const useSucraseTranspiler = extensionConfig.get<boolean>('build.useSucraseTranspiler', false);
     const useVscodeMarkdownStyles = extensionConfig.get<boolean>('preview.useVscodeMarkdownStyles', true);
     const useWhiteBackground = extensionConfig.get<boolean>('preview.useWhiteBackground', false);
     const customLayoutFilePath = extensionConfig.get<string>('preview.mdx.customLayoutFilePath', "");
@@ -175,6 +262,7 @@ export class Preview {
 
     Object.assign(this.configuration, {
       previewOnChange,
+      useSucraseTranspiler,
       useVscodeMarkdownStyles,
       useWhiteBackground,
       customLayoutFilePath,

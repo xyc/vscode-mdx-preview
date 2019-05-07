@@ -1,9 +1,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { Preview } from './preview/preview-manager';
-import { mdxTranspileAsync } from './transpiler/mdx/mdx';
-import { transformAsync as babelTransformAsync } from './transpiler/babel';
-import { checkFsPath, PathAccessDeniedError } from './security/checkFsPath';
+import * as typescript from 'typescript';
+import { Preview } from '../preview/preview-manager';
+import { transform } from './transform';
+import { checkFsPath, PathAccessDeniedError } from '../security/checkFsPath';
 
 const resolveFrom = require('resolve-from');
 
@@ -14,6 +14,7 @@ const NOOP_MODULE = `Object.defineProperty(exports, '__esModule', { value: true 
   exports.default = noop;`;
 
 // https://github.com/calvinmetcalf/rollup-plugin-node-builtins
+// License: MIT except ES6 ports of browserify modules which are whatever the original library was.
 const NODE_CORE_MODULES = new Set([
   // unshimmable
   'dns',
@@ -57,35 +58,47 @@ const SHIMMABLE_NODE_CORE_MODULES = new Set([
 
 const SEP = path.sep;
 
-export async function fetchLocal(pathname, isBare, preview: Preview) {
+export async function fetchLocal(request, isBare, parentId, preview: Preview) {
   try {
     const entryFsDirectory = preview.entryFsDirectory;
     if (!entryFsDirectory) {
       return NOOP_MODULE;
     }
 
-    let fsPath;
-    if (isBare) {
-      if (NODE_CORE_MODULES.has(pathname)) {
-        return {
-          fsPath: `/externalModules/${pathname}`,
-          code: NOOP_MODULE,
-          dependencies: [],
-        };
-      }
+    if (isBare && NODE_CORE_MODULES.has(request)) {
+      return {
+        fsPath: `/externalModules/${request}`,
+        code: NOOP_MODULE,
+        dependencies: [],
+      };
+    }
 
-      fsPath = resolveFrom(entryFsDirectory, pathname);
-    } else {
-      fsPath = resolveFrom(
-        path.dirname(pathname),
-        '.' + SEP + path.basename(pathname)
-      );
+    let fsPath;
+    if (preview.typescriptConfiguration && !parentId.split(path.sep).includes('node_modules')) {
+      const { tsCompilerOptions, tsCompilerHost } = preview.typescriptConfiguration;
+      const resolvedModule = typescript.resolveModuleName(
+        request,
+        parentId,
+        tsCompilerOptions,
+        tsCompilerHost
+      ).resolvedModule;
+      if (resolvedModule) {
+        fsPath = resolvedModule.resolvedFileName;
+        // don't resolve .d.ts file with tsCompilerHost
+        if (fsPath.endsWith('.d.ts')) {
+          fsPath = null;
+        }
+      }
+    }
+    if (!fsPath) {
+      const basedir = path.dirname(parentId);
+      fsPath = resolveFrom(basedir, request);
     }
 
     if(!checkFsPath(entryFsDirectory, fsPath)) {
-      if (SHIMMABLE_NODE_CORE_MODULES.has(pathname)) {
+      if (SHIMMABLE_NODE_CORE_MODULES.has(request)) {
         return {
-          fsPath: `/externalModules/${pathname}`,
+          fsPath: `/externalModules/${request}`,
           code: NOOP_MODULE,
           dependencies: [],
         };
@@ -93,7 +106,17 @@ export async function fetchLocal(pathname, isBare, preview: Preview) {
       throw new PathAccessDeniedError(fsPath);
     }
 
-    let code = fs.readFileSync(fsPath).toString();
+    preview.dependentFsPaths.add(fsPath);
+
+    let code: string;
+    if (preview.configuration.previewOnChange
+      && preview.editingDoc
+      && preview.editingDoc.uri.fsPath === fsPath) {
+      code = preview.editingDoc.getText();
+    } else {
+      code = fs.readFileSync(fsPath).toString();
+    }
+
     const extname = path.extname(fsPath);
     if (/\.json$/i.test(extname)) {
       return {
@@ -111,7 +134,6 @@ export async function fetchLocal(pathname, isBare, preview: Preview) {
       };
     }
     if (/\.(gif|png|jpe?g|svg)$/i.test(extname)) {
-      const fsPath = path.resolve(pathname);
       const code = `module.exports = "vscode-resource://${fsPath}"`;
       return {
         fsPath,
@@ -119,15 +141,13 @@ export async function fetchLocal(pathname, isBare, preview: Preview) {
         dependencies: [],
       };
     }
-    if (/\.mdx?$/i.test(extname)) {
-      code = await mdxTranspileAsync(code, false, preview);
-    }
 
-    // NOTE precinct works before babel transpiling
-    const dependencyNames = precinct(code);
+    code = await transform(code, fsPath, preview);
+    
     // Figure out dependencies from code
     // Don't care about dependency version ranges here, assuming user has already done
     // yarn install or npm install.
+    const dependencyNames = precinct(code);
     const dependencies = dependencyNames.map(dependencyName => {
       // precinct returns undefined for dynamic import expression, TODO: refactor this
       if (!dependencyName) {
@@ -143,30 +163,8 @@ export async function fetchLocal(pathname, isBare, preview: Preview) {
         return `npm://${dependencyName}`;
       }
 
-      const suffix = (dependencyName === '.' || dependencyName.endsWith(SEP)) ? SEP : '';
-      const dependencyUrl = `vfs://${path.resolve(
-        path.dirname(fsPath),
-        dependencyName
-      )}${suffix}`;
-      return dependencyUrl;
+      return dependencyName;
     });
-
-    if (!fsPath.split(path.sep).includes('node_modules')) {
-      console.log(`Transpiling: ${pathname}`);
-      code = (await babelTransformAsync(code)).code;
-    } else {
-      // Only transpile npm packages if it's es module
-      // isEsModule function is from
-      // https://github.com/CompuIves/codesandbox-client/blob/13c9eda9bfaa38dec6a1699e31233bee388857bc/packages/app/src/sandbox/eval/utils/is-es-module.js
-      // Copyright (C) 2018  Ives van Hoorne
-      const isESModule = /(;|^)(import|export)(\s|{)/gm.test(code);
-      if (isESModule) {
-        console.log(`Transpiling: ${pathname}`);
-        code = (await babelTransformAsync(code)).code;
-      } else {
-        code = code;
-      }
-    }
 
     return {
       fsPath,
@@ -174,7 +172,7 @@ export async function fetchLocal(pathname, isBare, preview: Preview) {
       dependencies,
     };
   } catch (error) {
-    console.error(error, pathname);
+    console.error(error, request);
     preview.webviewHandle.showPreviewError({ message: error.message });
   }
 }

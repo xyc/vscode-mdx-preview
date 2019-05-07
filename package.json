@@ -2,7 +2,7 @@
     "name": "vscode-mdx-preview",
     "displayName": "MDX Preview",
     "description": "MDX Preview",
-    "version": "0.1.5",
+    "version": "0.2.0",
     "publisher": "xyc",
     "repository": "https://github.com/xyc/vscode-mdx-preview",
     "engines": {
@@ -95,6 +95,11 @@
                     "group": "navigation"
                 },
                 {
+                    "command": "mdx-preview.commands.openPreview",
+                    "when": "editorLangId == typescriptreact",
+                    "group": "navigation"
+                },
+                {
                     "command": "mdx-preview.commands.refreshPreview",
                     "when": "mdxPreviewFocus",
                     "group": "navigation"
@@ -114,6 +119,11 @@
                 {
                     "command": "mdx-preview.commands.openPreview",
                     "when": "editorLangId == javascript",
+                    "group": "navigation"
+                },
+                {
+                    "command": "mdx-preview.commands.openPreview",
+                    "when": "editorLangId == typescriptreact",
                     "group": "navigation"
                 }
             ]
@@ -147,6 +157,12 @@
                         "Do not allow insecure content or eval",
                         "Allow insecure content (not recommended)"
                     ],
+                    "scope": "resource"
+                },
+                "mdx-preview.build.useSucraseTranspiler": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Use sucrase as transpiler",
                     "scope": "resource"
                 },
                 "mdx-preview.preview.useVscodeMarkdownStyles": {
@@ -191,7 +207,6 @@
         "semver": "^5.6.0",
         "ts-jest": "^23.6.0",
         "tslint": "^5.8.0",
-        "typescript": "3.3.3333",
         "vscode": "^1.1.28"
     },
     "dependencies": {
@@ -206,12 +221,14 @@
         "@mdx-js/mdx": "^0.20.3",
         "babel-plugin-transform-dynamic-import": "^2.1.0",
         "gray-matter": "^4.0.2",
+        "is-module": "^1.0.0",
         "path-is-inside": "^1.0.2",
         "precinct": "^6.1.1",
         "remark-parse": "^6.0.3",
         "remark-squeeze-paragraphs": "^3.0.3",
         "resolve-from": "^4.0.0",
         "sucrase": "^3.10.1",
+        "typescript": "3.3.3333",
         "unified": "^7.1.0"
     },
     "extensionPack": [

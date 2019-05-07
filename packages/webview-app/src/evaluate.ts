@@ -1,43 +1,17 @@
 import ValueEventEmitter from './lib/ValueEventEmitter';
-import { hasRuntimeError, dismissRuntimeErrors, handleRuntimeError } from './lib/errors';
+import {
+  currentBuildError,
+  dismissBuildError,
+  hasRuntimeError,
+  dismissRuntimeErrors,
+  handleRuntimeError,
+} from './lib/errors';
 import { ExtensionHandle } from './rpc-webview';
-import { createPolestar, FetchMeta } from '@dxflow/polestar';
+import { createPolestar, splitNPMURL, FetchMeta } from '@dxflow/polestar';
 import React from 'react';
 import ReactDOM from 'react-dom';
 const MDXTagModule = require('@mdx-js/tag'); // no type defs
 import vscodeMarkdownLayout from './components/VscodeMarkdownLayout';
-
-/**
- * Splitting URL
- * Adapted from https://github.com/frontarm/polestar/blob/9ad18be2eb1722fc84b90d519232664a44d586df/src/DefaultResolver.ts#L6
- */
-// \/?   -- needed for vfs root /
-const URLPattern = /^(?:(npm|vfs):\/\/)?((?:@[\w\.\-]+\/)?\/?\w[\w\.\-]+)(@[^\/]+)?(\/.*)?$/;
-
-function splitURL(url: string) {
-  let loaders = extractLoaders(url);
-  let requestWithoutLoaders = removeLoaders(url);
-  let match = requestWithoutLoaders.match(URLPattern);
-  if (match) {
-    let [_, protocol, name, version, pathname] = match;
-    return {
-      protocol,
-      loaders,
-      name,
-      version,
-      pathname,
-    };
-  }
-}
-
-function extractLoaders(url: string) {
-  let match = url.match(/^(.*!)*/);
-  return match ? match[0] : '';
-}
-
-function removeLoaders(url: string) {
-  return url.replace(/^(.*!)*/, '');
-}
 
 const preloadedModules: { [key: string]: string } = {
   "npm://react@latest": "npm://react@16.8.6",
@@ -62,41 +36,37 @@ const rpcFetcher = async (url: string, meta: FetchMeta) => {
     };
   }
 
-  const splitResult = splitURL(url);
+  const splitResult = splitNPMURL(url);
+  const { originalRequest, requiredById } = meta;
+  let request, isBare;
   if (splitResult) {
-    let { protocol, name = '', version, pathname = '' } = splitResult;
-    let isBare;
-    if (protocol === 'vfs') {
-      pathname = name + pathname;
-      isBare = false;
-    } else if (protocol = 'npm') {
-      pathname = name + pathname;
-      isBare = true;
-    }
-    const fetchResult = await ExtensionHandle.fetch(pathname, isBare);
-    if (!fetchResult) {
-      // TODO: yarn add if we didn't install the npm dependency
-      throw new Error(`Fetching ${pathname} failed.`);
-    }
-    const {
-      fsPath,
-      code,
-      dependencies,
-      css
-    } = fetchResult;
-
-    // console.log('fetched:', fsPath, code, dependencies, `isCSS: ${css}`);
-
-    return {
-      id: `vfs://${fsPath}`,
-      url,
-      code,
-      dependencies,
-      css
-    };
+    let { name = '', version, pathname = '' } = splitResult;
+    request = name + pathname;
+    isBare = true;
   } else {
-    throw new Error(`Invalid url: ${url}, ${JSON.stringify(meta, null, 2)}`);
+    request = originalRequest;
+    isBare = false;
   }
+
+  const fetchResult = await ExtensionHandle.fetch(
+    request,
+    isBare,
+    requiredById
+  );
+  if (!fetchResult) {
+    // TODO: yarn add if we didn't install the npm dependency 
+    throw new Error(`Fetching ${request} failed.`);
+  }
+  const { fsPath, code, dependencies, css } = fetchResult;
+
+  // console.log('fetched:', fsPath, code, dependencies, `isCSS: ${css}`);
+  return {
+    id: fsPath,
+    url,
+    code,
+    dependencies,
+    css,
+  };
 };
 
 /**
@@ -138,18 +108,24 @@ export async function evaluate(code: string, entryFilePath: string, entryFileDep
   evaluationProgress.value = EvaluationProgress.IN_PROGRESS;
   const evaluationStartTime = performance.now();
 
+  if (currentBuildError) {
+    dismissBuildError();
+    await polestar.clearError();
+    dismissRuntimeErrors();
+  }
+
   await preloadPromise;
 
   try {
     if (hasRuntimeError) {
-      polestar.clearError();
+      await polestar.clearError();
       dismissRuntimeErrors();
     }
     let evaluatedModule = await polestar.evaluate(
       entryFileDependencies,
       code,
       undefined,
-      `vfs://${entryFilePath}`
+      entryFilePath
     );
     const evaluationEndTime = performance.now();
     ExtensionHandle.reportPerformance(evaluationEndTime - evaluationStartTime);
@@ -159,4 +135,8 @@ export async function evaluate(code: string, entryFilePath: string, entryFileDep
   } finally {
     evaluationProgress.value = EvaluationProgress.COMPLETED;
   }
+}
+
+export async function invalidate(fsPath: string) {
+  await polestar.unload(fsPath);
 }

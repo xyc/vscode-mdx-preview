@@ -42,62 +42,92 @@ const components = {
     border-bottom-width: 1px;
     border-bottom-style: solid;
     font-weight: normal;
+    font-size: 28px;
     code {
       font-family: Menlo, Monaco, Consolas, 'Droid Sans Mono', 'Courier New',
         monospace, 'Droid Sans Fallback';
       font-size: inherit;
       line-height: auto;
     }
+    a {
+      font-size: inherit;
+      line-height: inherit;
+    }
   `,
   h2: styled.h2`
     ${bodyStyles}
     font-weight: normal;
+    font-size: 21px;
     code {
       font-family: Menlo, Monaco, Consolas, 'Droid Sans Mono', 'Courier New',
         monospace, 'Droid Sans Fallback';
       font-size: inherit;
       line-height: auto;
+    }
+    a {
+      font-size: inherit;
+      line-height: inherit;
     }
     line-height: 1.6;
   `,
   h3: styled.h3`
     ${bodyStyles}
     font-weight: normal;
+    font-size: 16.38px;
     code {
       font-family: Menlo, Monaco, Consolas, 'Droid Sans Mono', 'Courier New',
         monospace, 'Droid Sans Fallback';
       font-size: inherit;
       line-height: auto;
+    }
+    a {
+      font-size: inherit;
+      line-height: inherit;
     }
     line-height: 1.6;
   `,
   h4: styled.h4`
     ${bodyStyles}
+    font-size: 14px;
     code {
       font-family: Menlo, Monaco, Consolas, 'Droid Sans Mono', 'Courier New',
         monospace, 'Droid Sans Fallback';
       font-size: inherit;
       line-height: auto;
+    }
+    a {
+      font-size: inherit;
+      line-height: inherit;
     }
     line-height: 1.6;
   `,
   h5: styled.h5`
     ${bodyStyles}
+    font-size: 11.62px;
     code {
       font-family: Menlo, Monaco, Consolas, 'Droid Sans Mono', 'Courier New',
         monospace, 'Droid Sans Fallback';
       font-size: inherit;
       line-height: auto;
     }
+    a {
+      font-size: inherit;
+      line-height: inherit;
+    }
     line-height: 1.6;
   `,
   h6: styled.h6`
     ${bodyStyles}
+    font-size: 9.38px;
     code {
       font-family: Menlo, Monaco, Consolas, 'Droid Sans Mono', 'Courier New',
         monospace, 'Droid Sans Fallback';
       font-size: inherit;
       line-height: auto;
+    }
+    a {
+      font-size: inherit;
+      line-height: inherit;
     }
     line-height: 1.6;
   `,
