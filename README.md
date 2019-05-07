@@ -83,6 +83,8 @@ MDX Preview transpiles your `.mdx` file using `@mdx-js/mdx`, sends the initial f
 #### Some components doesn't work?
 In most cases runtime errors will surface in react-error-overlay. If it doesn't, you can open "Developer: Open Webview Developer Tools" (from command palette) to inspect the error. Note that VS Code webview has some inherent limitations that might cause errors.
 
+Build issues? Try checking `mdx-preview.build.useSucraseTranspiler` extension setting. It might solve it.
+
 ## Road map
 - [x] TypeScript support
 - [ ] Scroll Sync
