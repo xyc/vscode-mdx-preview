@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import * as path from 'path';
 import pathIsInside from 'path-is-inside';
 
 const rootDirectoryCache = new Map<string, string>();
@@ -31,6 +32,9 @@ export function handleDidChangeWorkspaceFolders() {
 
 export function checkFsPath(entryFsDirectory: string, fsPath: string): boolean {
   const rootDirectory = getRootDirectoryPath(entryFsDirectory);
+  if (path.sep === '\\') {
+    fsPath = path.normalize(fsPath);
+  }
   if (!pathIsInside(fsPath, rootDirectory)) {
     return false;
   }

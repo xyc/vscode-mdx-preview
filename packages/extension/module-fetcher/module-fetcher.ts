@@ -56,8 +56,6 @@ const SHIMMABLE_NODE_CORE_MODULES = new Set([
   'domain'
 ]);
 
-const SEP = path.sep;
-
 export async function fetchLocal(request, isBare, parentId, preview: Preview) {
   try {
     const entryFsDirectory = preview.entryFsDirectory;
@@ -118,6 +116,11 @@ export async function fetchLocal(request, isBare, parentId, preview: Preview) {
     }
 
     const extname = path.extname(fsPath);
+    if (path.sep === '\\') {
+      // Always return forward slash paths for resolution
+      // https://github.com/xyc/vscode-mdx-preview/issues/13
+      fsPath = fsPath.replace(/\\/g, '/');
+    }
     if (/\.json$/i.test(extname)) {
       return {
         fsPath,
@@ -154,9 +157,9 @@ export async function fetchLocal(request, isBare, parentId, preview: Preview) {
         return;
       }
       if (
-        !dependencyName.startsWith(SEP) &&
-        !dependencyName.startsWith('..' + SEP) &&
-        !dependencyName.startsWith('.' + SEP) &&
+        !dependencyName.startsWith('/') &&
+        !dependencyName.startsWith('../') &&
+        !dependencyName.startsWith('./') &&
         dependencyName !== '.'
       ) {
         // bare
