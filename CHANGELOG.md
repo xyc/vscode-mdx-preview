@@ -3,6 +3,9 @@ All notable changes to the "vscode-mdx-preview" extension will be documented in 
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.2.2] - 09/21/2019
+- Fixes windows issue [#13](https://github.com/xyc/vscode-mdx-preview/issues/13)
+
 ## [0.2.1] - 05/07/2019
 - TypeScript fix: tsconfig target default to ESNext
 
