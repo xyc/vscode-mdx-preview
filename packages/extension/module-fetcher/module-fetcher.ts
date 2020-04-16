@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as typescript from 'typescript';
+import * as sass from 'sass';
 import { Preview } from '../preview/preview-manager';
 import { transform } from './transform';
 import { checkFsPath, PathAccessDeniedError } from '../security/checkFsPath';
@@ -136,6 +137,20 @@ export async function fetchLocal(request, isBare, parentId, preview: Preview) {
         dependencies: [],
       };
     }
+    if (/\.(scss|sass)$/i.test(extname)) {
+      const css = sass.renderSync({
+        file: fsPath,
+        importer: function (url, prev, done) {
+          return { file: resolveFrom(path.dirname(fsPath), url) };
+        }
+      }).css;
+      return {
+        fsPath,
+        css: css && css.toString(),
+        code: "",
+        dependencies: [],
+      };
+    }
     if (/\.(gif|png|jpe?g|svg)$/i.test(extname)) {
       const code = `module.exports = "vscode-resource://${fsPath}"`;
       return {
@@ -160,7 +175,7 @@ export async function fetchLocal(request, isBare, parentId, preview: Preview) {
         !dependencyName.startsWith('/') &&
         !dependencyName.startsWith('../') &&
         !dependencyName.startsWith('./') &&
-        dependencyName !== '.'
+        (dependencyName !== '.' && dependencyName !== '..')
       ) {
         // bare
         return `npm://${dependencyName}`;

@@ -11,6 +11,8 @@ const babelOptions = {
     // selected plugins from https://github.com/babel/babel/blob/master/packages/babel-preset-stage-2/README.md
     babel.createConfigItem(require("@babel/plugin-proposal-export-namespace-from")),
     babel.createConfigItem(require("@babel/plugin-proposal-class-properties")),
+    babel.createConfigItem(require("@babel/plugin-proposal-optional-chaining")),
+    babel.createConfigItem(require("@babel/plugin-proposal-nullish-coalescing-operator")),
     babel.createConfigItem(require("@babel/plugin-syntax-dynamic-import")),
     babel.createConfigItem(require("babel-plugin-transform-dynamic-import")),
   ]
