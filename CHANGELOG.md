@@ -3,6 +3,12 @@ All notable changes to the "vscode-mdx-preview" extension will be documented in 
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.3.0] - 04/30/2020
+- Upgrade TypeScript to 3.8.3
+- Support SASS version `^1.26.3`
+- Bug fix: Don't resolve dependency path `..` as npm module
+- Update test scripts
+
 ## [0.2.2] - 09/21/2019
 - Fixes windows issue [#13](https://github.com/xyc/vscode-mdx-preview/issues/13)
 
