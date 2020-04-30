@@ -83,7 +83,7 @@ This extension contributes the following settings:
 MDX Preview transpiles your `.mdx` file using `@mdx-js/mdx`, sends the initial file to the webview, and recursively fetches local dependencies (from your workspace) and npm dependencies (from `node_modules` directory) from your workspace using [polestar](https://github.com/frontarm/polestar), a commonjs-ish module loader for browsers. MDX Preview has provided built-in dependencies for MDX rendering like `react`, `react-dom` and `@mdx-js/tag`.
 
 #### Some components doesn't work?
-In most cases runtime errors will surface in react-error-overlay. If it doesn't, you can open "Developer: Open Webview Developer Tools" (from command palette) to inspect the error. Note that VS Code webview has some inherent limitations that might cause errors.
+In most cases runtime errors will surface in react-error-overlay. If it doesn't, you can open "Developer: Open Webview Developer Tools" (from command palette) to inspect the error. Note that VS Code webview has some inherent limitations that might cause errors. For example, components that use local storage but without a try/catch block.
 
 Build issues? Try checking `mdx-preview.build.useSucraseTranspiler` extension setting. It might solve it.
 
