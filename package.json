@@ -2,7 +2,7 @@
     "name": "vscode-mdx-preview",
     "displayName": "MDX Preview",
     "description": "MDX Preview",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "publisher": "xyc",
     "repository": "https://github.com/xyc/vscode-mdx-preview",
     "engines": {
@@ -45,7 +45,7 @@
         "commands": [
             {
                 "command": "mdx-preview.commands.openPreview",
-                "title": "Open Preview",
+                "title": "Open MDX Preview",
                 "category": "MDX",
                 "icon": {
                     "light": "./assets/preview-light.png",
