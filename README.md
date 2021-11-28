@@ -1,5 +1,7 @@
 # [MDX Preview for Visual Studio Code](https://github.com/xyc/vscode-mdx-preview)
 
+**Please consider supporting the development of this project by [GitHub Sponsorship](https://github.com/sponsors/xyc?frequency=one-time). **
+
 **New in v0.2**: Type Script Preview and Hot Update https://vimeo.com/334605913
 
 MDX Preview lets you preview [MDX](https://mdxjs.com) seamlessly. Write markdown / JSX, see it live refresh and get instant visual feedback.
