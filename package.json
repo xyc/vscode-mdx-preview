@@ -237,6 +237,6 @@
         "unified": "^7.1.0"
     },
     "extensionPack": [
-        "silvenon.mdx"
+        "unifiedjs.vscode-mdx"
     ]
 }

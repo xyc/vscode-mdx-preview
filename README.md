@@ -19,7 +19,7 @@ To get started:
 
 Preview will automatically update when you change the file you are previewing or the files that currently previewed file depends on.
 
-[MDX Extension](https://github.com/silvenon/vscode-mdx) is recommended for syntax highlighting of MDX files.
+[MDX Extension](https://github.com/mdx-js/vscode-mdx) is recommended for syntax highlighting of MDX files.
 
 ### Custom Layout
 
@@ -104,4 +104,4 @@ Saying thanks to these awesome open source projects as well:
 - [gatsby-mdx](https://github.com/ChristopherBiscardi/gatsby-mdx) for properly doing MDX layout
 - [markdown-language-features](https://github.com/Microsoft/vscode/tree/master/extensions/markdown-language-features) for the markdown stylings and lessons on how to write a preview extension
 - [codesandbox](https://github.com/CompuIves/codesandbox-client) for inspirations on a rapid feedback loop
-- [mdx extension](https://github.com/silvenon/vscode-mdx) for mdx language contrib
+- [MDX Extension](https://github.com/mdx-js/vscode-mdx) for mdx language contrib
